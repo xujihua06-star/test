@@ -158,6 +158,10 @@
 .bag ul { padding: 0; list-style: none; }
 .bag li { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
 .bag small { color: var(--muted); }
+.quantity { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; }
+.quantity button { min-width: 36px; padding: 6px; }
+.quantity button:disabled { opacity: .45; cursor: default; }
+.quantity output { min-width: 22px; text-align: center; }
 .lightbox { max-width: min(920px, 94vw); padding: 10px; border: 0; color: white; background: #251a16; }
 .lightbox .outline:hover { background: #49362d; }
 .lightbox figure { margin: 12px 0 0; }

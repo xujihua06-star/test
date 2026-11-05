@@ -36,7 +36,9 @@ const products = [
   { id: "keyring", label: "03 / KEEP", name: "BLOOM 키링", price: 9900, options: ["Camellia Pink", "Nature Lime", "Jeju Blue"] },
 ];
 const outfit = { name: "BLOOM 재킷·팬츠 세트", price: 129000, options: ["S", "M", "L"] };
-type BagItem = { name: string; price: number; option: string };
+type BagProduct = { name: string; price: number; option: string };
+type BagItem = BagProduct & { quantity: number };
+const bagKey = "bloom-bag-v1";
 
 const categories = ["전체", "동백꽃", "마을 풍경", "제주 자연", "저장한 사진"];
 const highlights = [
@@ -63,6 +65,7 @@ export default function Home() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>();
   const [bag, setBag] = useState<BagItem[]>([]);
+  const [bagLoaded, setBagLoaded] = useState(false);
   const [preview, setPreview] = useState<{ title: string; urls: string[] }>();
   const [message, setMessage] = useState("");
   const photoDialog = useRef<HTMLDialogElement>(null);
@@ -114,12 +117,50 @@ export default function Home() {
     const matchesCategory = category === "전체" || group === category || (category === "저장한 사진" && favorites.includes(id));
     return matchesCategory && title.toLowerCase().includes(query.trim().toLowerCase());
   });
-  const subtotal = bag.reduce((total, item) => total + item.price, 0);
+  useEffect(() => {
+    try {
+      const saved: unknown = JSON.parse(localStorage.getItem(bagKey) ?? "[]");
+      if (Array.isArray(saved)) {
+        setBag(saved.filter((item): item is BagItem =>
+          item && typeof item.name === "string" && typeof item.option === "string" &&
+          Number.isSafeInteger(item.price) && item.price >= 0 &&
+          Number.isInteger(item.quantity) && item.quantity >= 1 && item.quantity <= 99
+        ));
+      }
+    } catch {
+      // The bag still works when browser storage is unavailable.
+    }
+    setBagLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!bagLoaded) return;
+    try {
+      localStorage.setItem(bagKey, JSON.stringify(bag));
+    } catch {
+      // Keep the bag in memory for this visit.
+    }
+  }, [bag, bagLoaded]);
+
+  const subtotal = bag.reduce((total, item) => total + item.price * item.quantity, 0);
+  const bagCount = bag.reduce((total, item) => total + item.quantity, 0);
   const shipping = subtotal > 0 && subtotal < 50000 ? 3000 : 0;
 
-  function addToBag(item: BagItem) {
-    setBag((items) => [...items, item]);
+  function addToBag(item: BagProduct) {
+    setBag((items) => {
+      const index = items.findIndex((entry) => entry.name === item.name && entry.option === item.option);
+      if (index === -1) return [...items, { ...item, quantity: 1 }];
+      return items.map((entry, position) => position === index
+        ? { ...item, quantity: Math.min(entry.quantity + 1, 99) }
+        : entry);
+    });
     bagDialog.current?.showModal();
+  }
+
+  function changeQuantity(index: number, delta: number) {
+    setBag((items) => items.map((item, position) => position === index
+      ? { ...item, quantity: Math.min(99, Math.max(1, item.quantity + delta)) }
+      : item));
   }
 
   return (
@@ -129,7 +170,7 @@ export default function Home() {
         <nav aria-label="주 메뉴">
           {sections.map(([id, label]) => <a key={id} href={"#" + id}>{label}</a>)}
         </nav>
-        <button className={styles.outline} onClick={() => bagDialog.current?.showModal()} aria-label={"장바구니 " + bag.length + "개"}>BAG <span>{bag.length}</span></button>
+        <button className={styles.outline} onClick={() => bagDialog.current?.showModal()} aria-label={"장바구니 " + bagCount + "개"}>BAG <span>{bagCount}</span></button>
       </header>
       <main>
         <section className={styles.hero} id="home">
@@ -293,7 +334,18 @@ export default function Home() {
         <form method="dialog"><button className={styles.outline} aria-label="장바구니 닫기">✕</button></form>
         <h2 id="bag-title">Your Bag.</h2>
         {bag.length ? (
-          <ul>{bag.map((item, index) => <li key={index}><div>{item.name}<br /><small>{item.option}</small></div><span>{won(item.price)}</span><button className={styles.outline} onClick={() => setBag((items) => items.filter((_, position) => position !== index))}>삭제</button></li>)}</ul>
+          <ul>{bag.map((item, index) => (
+            <li key={JSON.stringify([item.name, item.option])}>
+              <div>{item.name}<br /><small>{item.option}</small></div>
+              <span>{won(item.price * item.quantity)}</span>
+              <button className={styles.outline} onClick={() => setBag((items) => items.filter((_, position) => position !== index))}>삭제</button>
+              <div className={styles.quantity} role="group" aria-label={item.name + " " + item.option + " 수량"}>
+                <button className={styles.outline} aria-label="수량 줄이기" disabled={item.quantity === 1} onClick={() => changeQuantity(index, -1)}>−</button>
+                <output>{item.quantity}</output>
+                <button className={styles.outline} aria-label="수량 늘리기" disabled={item.quantity === 99} onClick={() => changeQuantity(index, 1)}>+</button>
+              </div>
+            </li>
+          ))}</ul>
         ) : <p>장바구니가 비어 있습니다.</p>}
         <p>상품 {won(subtotal)} + 배송 {won(shipping)}</p>
         <strong>합계 {won(subtotal + shipping)}</strong>
