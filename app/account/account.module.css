@@ -1,0 +1,21 @@
+.screen { min-height: 100dvh; display: grid; place-items: center; padding: 24px; color: #392b25; background: #f9f2e7; }
+.panel { width: min(100%, 460px); padding: clamp(20px, 6vw, 42px); border: 1px solid #d8cbbd; background: #fbf8f2; }
+.brand { font: 700 24px Georgia, serif; letter-spacing: .1em; }
+.panel h1 { margin: 12px 0 22px; font-size: 30px; font-weight: 700; }
+.form { display: grid; gap: 14px; }
+.form label { display: grid; gap: 5px; font-size: 14px; font-weight: 700; }
+.form input { min-width: 0; padding: 10px; border: 1px solid #d8cbbd; background: white; }
+.primary, .danger { padding: 10px 14px; border: 1px solid #784638; cursor: pointer; font-weight: 700; }
+.primary { background: #784638; color: white; }
+.primary:disabled, .danger:disabled { opacity: .55; cursor: default; }
+.danger { margin-top: 20px; color: #9a5145; }
+.secondary { display: inline-block; margin-top: 12px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.error { color: #963e35; font-size: 14px; }
+.email { display: grid; gap: 3px; margin-bottom: 15px; overflow-wrap: anywhere; }
+.profileHeader, .links { display: flex; align-items: center; gap: 8px; }
+.profileHeader { justify-content: space-between; }
+.profileHeader .secondary { margin: 0; }
+.links { flex-wrap: wrap; justify-content: end; font-size: 12px; font-weight: 700; }
+.links form { margin: 0; }
+.links a:hover, .links button:hover { text-decoration: underline; }
+.nickname { max-width: 95px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
