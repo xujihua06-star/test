@@ -39,6 +39,11 @@ const products = [
   { id: "keyring", label: "03 / KEEP", name: "BLOOM 키링", price: 9900, options: ["Camellia Pink", "Nature Lime", "Jeju Blue"] },
 ];
 const outfit = { name: "BLOOM 재킷·팬츠 세트", price: 129000, options: ["S", "M", "L"] };
+const styleNotes = [
+  { color: "Camellia Pink", link: "분홍 키링 보기", title: "차콜에 동백빛 한 방울", tip: "차콜 재킷과 팬츠를 맞춰 입고, 검은 가방에 분홍 꽃 키링을 달아 보세요. 차분한 옷차림에 작은 색 하나가 포인트가 돼요." },
+  { color: "Nature Lime", link: "연두 키링 보기", title: "가볍게 걷는 동백길", tip: "재킷 소매를 가볍게 접고, 밝은 운동화와 연두 키링을 더해 보세요. 산책할 때 입기 좋은 편안한 조합이에요." },
+  { color: "Jeju Blue", link: "파랑 키링 보기", title: "바다를 닮은 나들이 룩", tip: "재킷 안에 옅은 파란 셔츠를 입고 가방에 파랑 키링을 달아 보세요. 셔츠와 소품의 색을 맞추면 코디가 자연스럽게 이어져요." },
+];
 const postcardPhotos = photos.map(([id, title]) => ({ id, title }));
 const tourStops = [
   { id: "alley", stamp: "돌담길", symbol: "▧", title: "붉은 꽃이 이어지는 돌담길", story: "검은 돌담 사이로 붉은 동백이 이어집니다. 골목을 따라가며 발밑에 내려앉은 꽃잎도 찾아보세요." },
@@ -299,6 +304,7 @@ export default function Home() {
         <Postcard photos={postcardPhotos} date={postcardDate} setDate={setPostcardDate} completedTour={tourComplete} />
         <section className={styles.collection + " " + styles.section} id="collection">
           <Heading label="02 / THE COLLECTION" title="Take Jeju Home.">제주의 기억을 오래 간직하는<br />BLOOM 의류와 소품.</Heading>
+          <p className={styles.stampOffer}><a href="#style-notes">BLOOM 스타일 노트 · 재킷과 키링 코디 보기 ↗</a></p>
           <aside className={styles.collectionCoupon} aria-label="할인 쿠폰 안내">
             <div>
               <p className={styles.eyebrow}>BLOOM COUPON</p>
@@ -312,7 +318,7 @@ export default function Home() {
           <p className={styles.stampOffer}><a href="#photo-tour">동백길 스탬프북 완주 혜택 · 굿즈 {stampRate}% 할인 ↗</a></p>
           <div className={styles.grid}>
             {products.map((product) => (
-              <article className={styles.card} key={product.id}>
+              <article className={styles.card} key={product.id} id={product.id === "keyring" ? "shop-keyring" : undefined}>
                 {product.id === "keyring"
                   ? <KeyringPreview options={product.options} selected={keyringColor} onSelect={setKeyringColor} />
                   : <img src={asset(product.id)} alt={product.name} loading="lazy" />}
@@ -328,7 +334,7 @@ export default function Home() {
               </article>
             ))}
           </div>
-          <article className={styles.editorial}>
+          <article className={styles.editorial} id="shop-outfit">
             <img src={asset("fashion-editorial")} alt="제주 바다와 동백꽃을 배경으로 한 BLOOM 패션 화보와 소품 디테일" loading="lazy" />
             <form onSubmit={(event) => {
               event.preventDefault();
@@ -346,6 +352,26 @@ export default function Home() {
           <p className={styles.note}>상품과 가격은 시연용입니다. 장바구니에서 예상 배송비와 합계를 확인할 수 있습니다.</p>
         </section>
 
+        <section className={styles.section + " " + styles.styleNotes} id="style-notes" aria-labelledby="style-notes-title">
+          <p className={styles.eyebrow}>THE BLOOM EDIT / STYLE NOTES</p>
+          <h2 id="style-notes-title">BLOOM 스타일 노트.</h2>
+          <div className={styles.styleNotesLayout}>
+            <img src={asset("fashion-editorial")} alt="차콜 재킷과 팬츠에 꽃 소품을 매치한 BLOOM 화보" loading="lazy" />
+            <ol>
+              {styleNotes.map((look, index) => (
+                <li key={look.color}>
+                  <p className={styles.eyebrow}>LOOK 0{index + 1} / {look.color}</p>
+                  <h3>{look.title}</h3>
+                  <p className={styles.copy}>{look.tip}</p>
+                  <div className={styles.styleLinks}>
+                    <a className={styles.textLink} href="#shop-outfit">재킷·팬츠 보기 ↗</a>
+                    <a className={styles.textLink} href="#shop-keyring" onClick={() => setKeyringColor(look.color)}>{look.link} ↗</a>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
         <GiftBuilder products={[...products, outfit]} onAdd={(items) => addToBag(...items)} />
         <section className={styles.story + " " + styles.section} id="story">
           <img src={asset("story")} alt="제주 동백마을에서 영감을 받은 BLOOM 이야기" loading="lazy" />

@@ -327,3 +327,14 @@
 
 .stampOffer { margin: 0 0 16px; color: var(--accent); font-size: 14px; font-weight: 700; }
 .site .stampOffer a { text-decoration: underline; text-underline-offset: 4px; }
+
+.styleNotes { background: #f7ede3; }
+.styleNotesLayout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); align-items: start; gap: clamp(20px, 5vw, 64px); margin-top: 26px; }
+.styleNotesLayout > img { display: block; width: 100%; height: auto; border: 1px solid var(--line); }
+.styleNotesLayout ol { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.styleNotesLayout li { padding: clamp(16px, 3vw, 28px); border: 1px solid var(--line); background: var(--paper); }
+.styleNotesLayout h3 { margin: 6px 0; font-size: clamp(19px, 2.4vw, 27px); font-weight: 700; }
+.styleLinks { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 10px; }
+@media (max-width: 760px) {
+  .styleNotesLayout { grid-template-columns: minmax(0, 1fr); }
+}
