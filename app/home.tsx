@@ -257,10 +257,23 @@ export default function Home({ account, welcome }: { account: ReactNode; welcome
                   {label} <span aria-hidden="true">↗</span>
                 </a>
               ))}
+              <div className={styles.headerMenuExtras}>
+                <button
+                  className={styles.headerMenuBag}
+                  type="button"
+                  aria-label={"장바구니 " + bagCount + "개"}
+                  onClick={() => {
+                    setMenuOpen(false);
+                    menuButton.current?.focus();
+                    bagDialog.current?.showModal();
+                  }}
+                >
+                  BAG <span>{bagCount}</span>
+                </button>
+                <div className={styles.headerMenuAccount}>{account}</div>
+              </div>
             </nav>
           </div>
-          {account}
-          <button className={styles.outline} onClick={() => bagDialog.current?.showModal()} aria-label={"장바구니 " + bagCount + "개"}>BAG <span>{bagCount}</span></button>
         </div>
       </header>
       <main>
