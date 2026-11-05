@@ -35,8 +35,8 @@ const products = [
   { id: "puzzle", label: "02 / PLAY", name: "BLOOM 퍼즐", price: 25000, options: ["퍼즐 + 보관 패키지"] },
   { id: "keyring", label: "03 / KEEP", name: "BLOOM 키링", price: 9900, options: ["Camellia Pink", "Nature Lime", "Jeju Blue"] },
 ];
-const editorial = { name: "동백꽃 바다의 BLOOM 패션 화보", price: 7900, option: "디지털 이미지", digital: true };
-type BagItem = { name: string; price: number; option: string; digital?: boolean };
+const outfit = { name: "BLOOM 재킷·팬츠 세트", price: 129000, options: ["S", "M", "L"] };
+type BagItem = { name: string; price: number; option: string };
 
 const categories = ["전체", "동백꽃", "마을 풍경", "제주 자연", "저장한 사진"];
 const highlights = [
@@ -115,8 +115,7 @@ export default function Home() {
     return matchesCategory && title.toLowerCase().includes(query.trim().toLowerCase());
   });
   const subtotal = bag.reduce((total, item) => total + item.price, 0);
-  const physicalSubtotal = bag.reduce((total, item) => total + (item.digital ? 0 : item.price), 0);
-  const shipping = physicalSubtotal > 0 && physicalSubtotal < 50000 ? 3000 : 0;
+  const shipping = subtotal > 0 && subtotal < 50000 ? 3000 : 0;
 
   function addToBag(item: BagItem) {
     setBag((items) => [...items, item]);
@@ -214,7 +213,7 @@ export default function Home() {
         </section>
 
         <section className={styles.collection + " " + styles.section} id="collection">
-          <Heading label="02 / THE COLLECTION" title="Take Jeju Home.">제주의 기억을 오래 간직하는<br />BLOOM 소품과 패션 화보.</Heading>
+          <Heading label="02 / THE COLLECTION" title="Take Jeju Home.">제주의 기억을 오래 간직하는<br />BLOOM 의류와 소품.</Heading>
           <div className={styles.grid}>
             {products.map((product) => (
               <article className={styles.card} key={product.id}>
@@ -233,13 +232,18 @@ export default function Home() {
           </div>
           <article className={styles.editorial}>
             <img src={asset("fashion-editorial")} alt="제주 바다와 동백꽃을 배경으로 한 BLOOM 패션 화보와 소품 디테일" loading="lazy" />
-            <div>
-              <p className={styles.eyebrow}>04 / FASHION EDITORIAL</p>
-              <h3>{editorial.name}</h3>
-              <p className={styles.copy}>동백이 핀 제주 바다를 배경으로 BLOOM의 스타일을 담은 세로형 화보 이미지입니다.</p>
-              <p className={styles.editorialStatus}>{won(editorial.price)} · 디지털 이미지</p>
-              <button className={styles.cta} onClick={() => addToBag(editorial)}>ADD TO BAG <span aria-hidden="true">↗</span></button>
-            </div>
+            <form onSubmit={(event) => {
+              event.preventDefault();
+              const option = String(new FormData(event.currentTarget).get("size"));
+              addToBag({ name: outfit.name, price: outfit.price, option });
+            }}>
+              <p className={styles.eyebrow}>04 / WEAR</p>
+              <h3>{outfit.name}</h3>
+              <p className={styles.copy}>동백꽃을 모티프로 한 차콜 재킷과 와이드 팬츠 세트입니다.</p>
+              <p className={styles.editorialStatus}>{won(outfit.price)} · 재킷 + 팬츠</p>
+              <label>사이즈 <select name="size">{outfit.options.map((size) => <option key={size}>{size}</option>)}</select></label>
+              <button className={styles.cta}>ADD TO BAG <span aria-hidden="true">↗</span></button>
+            </form>
           </article>
           <p className={styles.note}>상품과 가격은 시연용입니다. 장바구니에서 예상 배송비와 합계를 확인할 수 있습니다.</p>
         </section>
