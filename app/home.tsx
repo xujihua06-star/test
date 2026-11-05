@@ -238,7 +238,7 @@ export default function Home({ account, welcome }: { account: ReactNode; welcome
   return (
     <div className={styles.site}>
       <header className={styles.header}>
-        <a className={styles.brand} href="#home">BLOOM<span>.</span></a>
+        <a className={styles.brand} href="#home">Bloom<span>.</span></a>
         <div className={styles.headerTools}>
           <div ref={menuRef}>
             <button
@@ -281,7 +281,7 @@ export default function Home({ account, welcome }: { account: ReactNode; welcome
         <section className={styles.hero} id="home">
           <div className={styles.intro}>
             <p className={styles.eyebrow}>JEJU DONGBAEK VILLAGE</p>
-            <h1>BL<em>OO</em>M<span>.</span></h1>
+            <h1>Bloom<span>.</span></h1>
             <p className={styles.tagline}>제주의 순간을,<br />일상에 피우다.</p>
             <p className={styles.copy}>동백마을의 아름다운 풍경을 기록하고<br />작은 마을의 이야기를 일상으로 가져가세요.</p>
             <div className={styles.heroActions}>
@@ -461,7 +461,7 @@ export default function Home({ account, welcome }: { account: ReactNode; welcome
       </main>
 
       <footer className={styles.footer}>
-        <div><a className={styles.brand} href="#home">BLOOM.</a><p>제주의 순간을, 일상에 피우다.</p></div>
+        <div><a className={styles.brand} href="#home">Bloom<span>.</span></a><p>제주의 순간을, 일상에 피우다.</p></div>
         <nav aria-label="하단 메뉴">
           <a href="#village">동백마을 갤러리</a>
           <a href="#collection">컬렉션</a>

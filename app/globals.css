@@ -1,6 +1,14 @@
 @import "tailwindcss";
 
 @font-face {
+  font-family: "Parisienne";
+  src: url("/fonts/parisienne-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "Cormorant Garamond";
   src: url("/fonts/cormorant-normal.woff2") format("woff2");
   font-style: normal;
