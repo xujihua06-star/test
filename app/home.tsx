@@ -77,6 +77,19 @@ function Heading({ label, title, children }: { label: string; title: string; chi
   );
 }
 
+function BloomWordmark() {
+  return (
+    <>
+      Bloom
+      <svg className={styles.wordmarkFlower} viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M2 39c10 4 20-3 24-13m-7 9c1-7-3-10-8-11 0 6 3 10 8 11Zm1 0c4-5 10-5 14-2-4 4-9 5-14 2Z" />
+        <path className={styles.flowerPetals} d="M27 15c-4-5-1-11 3-11s6 5 4 10c5-4 11-1 11 3s-5 7-10 6c3 5 0 10-4 10s-6-4-6-9c-4 3-10 0-9-4 1-4 6-5 11-3Z" />
+        <circle cx="30" cy="19" r="2" fill="currentColor" stroke="none" />
+      </svg>
+    </>
+  );
+}
+
 export default function Home({ account, welcome }: { account: ReactNode; welcome: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -238,7 +251,7 @@ export default function Home({ account, welcome }: { account: ReactNode; welcome
   return (
     <div className={styles.site}>
       <header className={styles.header}>
-        <a className={styles.brand} href="#home">Bloom<span>.</span></a>
+        <a className={styles.brand} href="#home"><BloomWordmark /></a>
         <div className={styles.headerTools}>
           <div ref={menuRef}>
             <button
@@ -281,7 +294,7 @@ export default function Home({ account, welcome }: { account: ReactNode; welcome
         <section className={styles.hero} id="home">
           <div className={styles.intro}>
             <p className={styles.eyebrow}>JEJU DONGBAEK VILLAGE</p>
-            <h1>Bloom<span>.</span></h1>
+            <h1><BloomWordmark /></h1>
             <p className={styles.tagline}>제주의 순간을,<br />일상에 피우다.</p>
             <p className={styles.copy}>동백마을의 아름다운 풍경을 기록하고<br />작은 마을의 이야기를 일상으로 가져가세요.</p>
             <div className={styles.heroActions}>
@@ -461,7 +474,7 @@ export default function Home({ account, welcome }: { account: ReactNode; welcome
       </main>
 
       <footer className={styles.footer}>
-        <div><a className={styles.brand} href="#home">Bloom<span>.</span></a><p>제주의 순간을, 일상에 피우다.</p></div>
+        <div><a className={styles.brand} href="#home"><BloomWordmark /></a><p>제주의 순간을, 일상에 피우다.</p></div>
         <nav aria-label="하단 메뉴">
           <a href="#village">동백마을 갤러리</a>
           <a href="#collection">컬렉션</a>
