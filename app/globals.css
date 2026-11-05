@@ -11,6 +11,18 @@ body {
   font-family: Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 }
 
+:where(button, input[type="button"], input[type="submit"], input[type="reset"]) {
+  border-radius: 999px;
+}
+
+:where(input:not([type="hidden"]), select, textarea) {
+  border-radius: 12px;
+}
+
+input::file-selector-button {
+  border-radius: 999px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }

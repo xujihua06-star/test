@@ -34,6 +34,7 @@
 .header nav a:hover, .mobile a:hover { color: var(--accent); }
 
 .outline, .filters button {
+  border-radius: 999px;
   padding: 9px 13px;
   border: 1px solid #aa9787;
   background: transparent;
@@ -82,6 +83,7 @@
 .heroImage { display: block; width: 100%; height: 100%; min-height: clamp(530px, 47vw, 680px); object-fit: cover; }
 .heroIndex { position: absolute; right: 20px; bottom: 20px; padding: 9px 11px; background: var(--paper); font-size: 10px; letter-spacing: .16em; }
 .site .cta {
+  border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
@@ -120,6 +122,8 @@
 }
 .card { background: var(--paper); border: 1px solid var(--line); overflow: hidden; }
 .photoButton { display: block; width: 100%; border: 0; padding: 0; background: transparent; overflow: hidden; }
+.card:has(> .photoButton) { border-radius: 20px; }
+.photoButton { border-radius: 19px 19px 0 0; }
 .photoButton img { transition: transform .25s; }
 .photoButton:hover img { transform: scale(1.04); }
 .cardBody { padding: clamp(12px, 2vw, 23px); }
@@ -259,6 +263,7 @@
 }
 .highlights h2 { font-size: clamp(31px, 4.3vw, 66px); }
 .site .highlight {
+  border-radius: 24px;
   position: relative;
   isolation: isolate;
   display: flex;
@@ -327,7 +332,7 @@
 .calendarHeader h3 { margin: 0; font-size: clamp(16px, 4vw, 22px); font-weight: 700; }
 .calendarGrid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; margin-block: 14px; }
 .weekday { padding-block: 5px; font-size: 12px; font-weight: 700; color: var(--muted); }
-.calendarDay { position: relative; min-height: 38px; border: 1px solid transparent; border-radius: 4px; font-size: 14px; }
+.calendarDay { position: relative; min-height: 38px; border: 1px solid transparent; border-radius: 999px; font-size: 14px; }
 .calendarDay[data-outside] { color: var(--muted); background: #f1e9de; }
 .calendarDay:hover { background: #eee0d4; }
 .calendarDay[aria-current="date"] { border-color: var(--accent); font-weight: 700; }
