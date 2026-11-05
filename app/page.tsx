@@ -210,7 +210,7 @@ export default function Home() {
           <div className={styles.grid}>
             {products.map((product) => (
               <article className={styles.card} key={product.id}>
-                <img src={asset(product.id)} alt={product.name} loading="lazy" />
+                <img src={product.id === "keyring" ? "/bloom/keyring.webp?v=flower" : asset(product.id)} alt={product.name} loading="lazy" />
                 <form className={styles.cardBody} onSubmit={(event) => {
                   event.preventDefault();
                   const option = String(new FormData(event.currentTarget).get("option"));
