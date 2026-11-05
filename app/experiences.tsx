@@ -156,10 +156,19 @@ export function PhotoTour({ stops, stamps, onStamp, complete, discountRate }: {
           ))}
         </ul>
         <p role="status">{complete ? "동백길 완주!" : "완주까지 " + stamps.length + " / " + stops.length}</p>
-        {complete && <div className={styles.stampLinks}>
-          <a className={bloom.cta} href="#postcard">완주 엽서 만들기 ↗</a>
-          <a className={bloom.cta} href="#collection">굿즈 둘러보기 ↗</a>
-        </div>}
+        {complete && (
+          <>
+            <div className={styles.stampReward}>
+              <p className={bloom.eyebrow}>굿즈 {discountRate}% 할인 코드</p>
+              <code>BLOOM{discountRate}</code>
+              <p className={bloom.copy}>완주 할인은 장바구니에서 자동 적용돼요.</p>
+            </div>
+            <div className={styles.stampLinks}>
+              <a className={bloom.cta} href="#postcard">완주 엽서 만들기 ↗</a>
+              <a className={bloom.cta} href="#collection">굿즈 둘러보기 ↗</a>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );
