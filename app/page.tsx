@@ -272,6 +272,16 @@ export default function Home() {
         <Postcard photos={postcardPhotos} date={postcardDate} setDate={setPostcardDate} />
         <section className={styles.collection + " " + styles.section} id="collection">
           <Heading label="02 / THE COLLECTION" title="Take Jeju Home.">제주의 기억을 오래 간직하는<br />BLOOM 의류와 소품.</Heading>
+          <aside className={styles.collectionCoupon} aria-label="할인 쿠폰 안내">
+            <div>
+              <p className={styles.eyebrow}>BLOOM COUPON</p>
+              <strong>{won(coupon.amount)} 할인 쿠폰</strong>
+              <p className={styles.copy}>상품 합계 {won(coupon.minimum)} 이상이면 장바구니에서 적용할 수 있어요.</p>
+            </div>
+            <button className={styles.cta} type="button" onClick={() => bagDialog.current?.showModal()}>
+              장바구니에서 쿠폰 보기 <span aria-hidden="true">↗</span>
+            </button>
+          </aside>
           <div className={styles.grid}>
             {products.map((product) => (
               <article className={styles.card} key={product.id}>
