@@ -37,6 +37,11 @@ const products = [
 ];
 
 const categories = ["전체", "동백꽃", "마을 풍경", "제주 자연", "저장한 사진"];
+const highlights = [
+  { id: "village", number: "01", image: "alley", label: "THE PHOTO ARCHIVE", title: "동백꽃 따라 걷는 길", description: "붉은 동백과 검은 돌담이 만나는 마을의 장면들" },
+  { id: "collection", number: "02", image: "puzzle", label: "THE COLLECTION", title: "제주를 간직하는 방법", description: "가디건, 퍼즐, 키링에 담은 여행의 기억" },
+  { id: "community", number: "03", image: "sunset", label: "YOUR MOMENTS", title: "나만의 제주 한 컷", description: "내가 만난 제주의 순간을 사진으로 남기기" },
+];
 const favoritesKey = "bloom-favorites";
 const asset = (name: string) => "/bloom/" + name + ".webp";
 const won = (amount: number) => "₩" + amount.toLocaleString("ko-KR");
@@ -126,13 +131,39 @@ export default function Home() {
             <h1>BL<em>OO</em>M<span>.</span></h1>
             <p className={styles.tagline}>제주의 순간을,<br />일상에 피우다.</p>
             <p className={styles.copy}>동백마을의 아름다운 풍경을 기록하고<br />작은 마을의 이야기를 일상으로 가져가세요.</p>
-            <a className={styles.cta} href="#archive">EXPLORE THE STORY <span aria-hidden="true">↗</span></a>
+            <div className={styles.heroActions}>
+              <a className={styles.cta} href="#village">동백마을 둘러보기 <span aria-hidden="true">↗</span></a>
+              <a className={styles.textLink} href="#collection">컬렉션 보기 <span aria-hidden="true">→</span></a>
+            </div>
           </div>
           <img className={styles.heroImage} src={asset("hero")} alt="BLOOM 제주 동백마을 캠페인" fetchPriority="high" />
           <span className={styles.heroIndex}>01 / JEJU ISLAND</span>
         </section>
 
-        <section className={styles.section} id="archive">
+        <section className={styles.highlights + " " + styles.section} aria-labelledby="highlights-title">
+          <div className={styles.heading}>
+            <div>
+              <p className={styles.eyebrow}>THE BLOOM EDIT / JEJU</p>
+              <h2 id="highlights-title">제주를 만나는 세 가지 순간.</h2>
+            </div>
+            <p className={styles.copy}>동백길을 따라 걷고, 마음에 남은 풍경을<br />나만의 방식으로 간직해 보세요.</p>
+          </div>
+          <div className={styles.grid}>
+            {highlights.map(({ id, number, image, label, title, description }) => (
+              <a href={"#" + id} className={styles.highlight} key={id}>
+                <img src={asset(image)} alt="" loading="lazy" />
+                <div className={styles.highlightBody}>
+                  <p className={styles.eyebrow}>{number} / {label}</p>
+                  <h3>{title}</h3>
+                  <p>{description}</p>
+                </div>
+                <span className={styles.highlightArrow} aria-hidden="true">↗</span>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.archive + " " + styles.section} id="archive">
           <Heading label="01 / THE ARCHIVE" title="Moments of Jeju.">동백이 피어나는 순간부터 마을의 일상까지,<br />제주의 장면을 담았습니다.</Heading>
           <div className={styles.grid}>
             {archive.map(([id, label, alt], index) => (
@@ -152,6 +183,7 @@ export default function Home() {
             </div>
             <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="사진 제목 검색" aria-label="사진 제목 검색" />
           </div>
+          <p className={styles.results} role="status">{visiblePhotos.length}장의 사진 <span> / 전체 {photos.length}장</span></p>
           <div className={styles.grid}>
             {visiblePhotos.map((photo) => {
               const [id, title, group, description] = photo;
@@ -221,7 +253,15 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className={styles.footer}><div><a className={styles.brand} href="#home">BLOOM.</a><p>제주의 순간을, 일상에 피우다.</p></div><p>JEJU DONGBAEK VILLAGE<br />© 2026 BLOOM · 시연용</p></footer>
+      <footer className={styles.footer}>
+        <div><a className={styles.brand} href="#home">BLOOM.</a><p>제주의 순간을, 일상에 피우다.</p></div>
+        <nav aria-label="하단 메뉴">
+          <a href="#village">동백마을 갤러리</a>
+          <a href="#collection">컬렉션</a>
+          <a href="#community">나만의 제주 한 컷</a>
+        </nav>
+        <div className={styles.footerEnd}><a href="#home">맨 위로 ↑</a><p>© 2026 BLOOM · 시연용</p></div>
+      </footer>
       <nav className={styles.mobile} aria-label="모바일 메뉴"><a href="#home">HOME</a><a href="#village">동백마을</a><a href="#collection">SHOP</a><a href="#community">COMMUNITY</a></nav>
 
       <dialog className={styles.lightbox} ref={photoDialog} aria-label="사진 확대">
