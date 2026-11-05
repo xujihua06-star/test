@@ -324,3 +324,6 @@
 
 .calendarReturn { padding: 0 var(--gutter) 45px; background: #f9f2e7; text-align: center; }
 .calendarReturn a { display: inline-block; }
+
+.stampOffer { margin: 0 0 16px; color: var(--accent); font-size: 14px; font-weight: 700; }
+.site .stampOffer a { text-decoration: underline; text-underline-offset: 4px; }

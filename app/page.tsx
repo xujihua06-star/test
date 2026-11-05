@@ -41,10 +41,12 @@ const products = [
 const outfit = { name: "BLOOM 재킷·팬츠 세트", price: 129000, options: ["S", "M", "L"] };
 const postcardPhotos = photos.map(([id, title]) => ({ id, title }));
 const tourStops = [
-  { id: "alley", title: "붉은 꽃이 이어지는 돌담길", story: "검은 돌담 사이로 붉은 동백이 이어집니다. 골목을 따라가며 발밑에 내려앉은 꽃잎도 찾아보세요." },
-  { id: "camellia", title: "가까이에서 만나는 동백", story: "짙은 초록 잎 사이, 붉은 꽃잎 가운데 노란 꽃술이 보입니다. 걸음을 멈추면 멀리서는 보이지 않던 색이 드러납니다." },
-  { id: "sea", title: "골목 끝에서 만나는 바다", story: "유채꽃 너머로 바다가 펼쳐집니다. 돌담길에서 시작한 산책을 수평선을 바라보며 마무리해 보세요." },
+  { id: "alley", stamp: "돌담길", symbol: "▧", title: "붉은 꽃이 이어지는 돌담길", story: "검은 돌담 사이로 붉은 동백이 이어집니다. 골목을 따라가며 발밑에 내려앉은 꽃잎도 찾아보세요." },
+  { id: "camellia", stamp: "동백꽃", symbol: "✿", title: "가까이에서 만나는 동백", story: "짙은 초록 잎 사이, 붉은 꽃잎 가운데 노란 꽃술이 보입니다. 걸음을 멈추면 멀리서는 보이지 않던 색이 드러납니다." },
+  { id: "sea", stamp: "제주 바다", symbol: "≈", title: "골목 끝에서 만나는 바다", story: "유채꽃 너머로 바다가 펼쳐집니다. 돌담길에서 시작한 산책을 수평선을 바라보며 마무리해 보세요." },
 ];
+const stampKey = "bloom-tour-stamps";
+const stampRate = 10;
 type BagProduct = { name: string; price: number; option: string };
 type BagItem = BagProduct & { quantity: number };
 const bagKey = "bloom-bag-v1";
@@ -77,6 +79,7 @@ export default function Home() {
   const [bag, setBag] = useState<BagItem[]>([]);
   const [bagLoaded, setBagLoaded] = useState(false);
   const [couponApplied, setCouponApplied] = useState(false);
+  const [stamps, setStamps] = useState<string[]>([]);
   const [preview, setPreview] = useState<{ title: string; urls: string[] }>();
   const [message, setMessage] = useState("");
   const [postcardDate, setPostcardDate] = useState("");
@@ -84,6 +87,26 @@ export default function Home() {
   const photoDialog = useRef<HTMLDialogElement>(null);
   const bagDialog = useRef<HTMLDialogElement>(null);
   const previewUrls = useRef<string[]>([]);
+
+  useEffect(() => {
+    try {
+      const stored: unknown = JSON.parse(localStorage.getItem(stampKey) ?? "[]");
+      if (Array.isArray(stored)) setStamps(tourStops.filter((stop) => stored.includes(stop.id)).map((stop) => stop.id));
+    } catch {
+      // Keep the stamp book available without storage.
+    }
+  }, []);
+
+  function collectStamp(id: string) {
+    if (stamps.includes(id)) return;
+    const next = [...stamps, id];
+    setStamps(next);
+    try {
+      localStorage.setItem(stampKey, JSON.stringify(next));
+    } catch {
+      // Keep stamps for this visit.
+    }
+  }
 
   useEffect(() => {
     try {
@@ -159,7 +182,11 @@ export default function Home() {
   const bagCount = bag.reduce((total, item) => total + item.quantity, 0);
   const shipping = subtotal > 0 && subtotal < 50000 ? 3000 : 0;
   const couponEligible = subtotal >= coupon.minimum;
-  const discount = couponApplied && couponEligible ? coupon.amount : 0;
+  const tourComplete = tourStops.every(({ id }) => stamps.includes(id));
+  const stampDiscount = tourComplete ? Math.floor(subtotal * stampRate / 100) : 0;
+  const couponDiscount = couponApplied && couponEligible ? coupon.amount : 0;
+  const discount = Math.max(couponDiscount, stampDiscount);
+  const stampWins = stampDiscount > 0 && stampDiscount >= couponDiscount;
 
   function addToBag(...additions: BagProduct[]) {
     setBag((current) => additions.reduce((items, item) => {
@@ -268,8 +295,8 @@ export default function Home() {
           <p className={styles.note}>갤러리의 풍경은 시연용 예시 이미지입니다. 즐겨찾기는 현재 브라우저에 저장됩니다.</p>
         </section>
 
-        <PhotoTour stops={tourStops} />
-        <Postcard photos={postcardPhotos} date={postcardDate} setDate={setPostcardDate} />
+        <PhotoTour stops={tourStops} stamps={stamps} onStamp={collectStamp} complete={tourComplete} discountRate={stampRate} />
+        <Postcard photos={postcardPhotos} date={postcardDate} setDate={setPostcardDate} completedTour={tourComplete} />
         <section className={styles.collection + " " + styles.section} id="collection">
           <Heading label="02 / THE COLLECTION" title="Take Jeju Home.">제주의 기억을 오래 간직하는<br />BLOOM 의류와 소품.</Heading>
           <aside className={styles.collectionCoupon} aria-label="할인 쿠폰 안내">
@@ -282,6 +309,7 @@ export default function Home() {
               장바구니에서 쿠폰 보기 <span aria-hidden="true">↗</span>
             </button>
           </aside>
+          <p className={styles.stampOffer}><a href="#photo-tour">동백길 스탬프북 완주 혜택 · 굿즈 {stampRate}% 할인 ↗</a></p>
           <div className={styles.grid}>
             {products.map((product) => (
               <article className={styles.card} key={product.id}>
@@ -384,14 +412,17 @@ export default function Home() {
             <strong>{won(coupon.amount)} 할인 쿠폰</strong>
             <p role="status">{!couponEligible
               ? `상품 금액 ${won(coupon.minimum - subtotal)} 더 담으면 사용 가능`
-              : couponApplied ? "쿠폰이 적용되었습니다." : `상품 합계 ${won(coupon.minimum)} 이상 구매 시 사용 가능`}</p>
+              : couponApplied
+                ? stampWins ? "더 큰 완주 할인이 적용됩니다." : "쿠폰이 적용되었습니다."
+                : `상품 합계 ${won(coupon.minimum)} 이상 구매 시 사용 가능`}</p>
           </div>
           <button className={styles.outline} type="button" disabled={!couponEligible && !couponApplied} onClick={() => setCouponApplied(!couponApplied)}>
             {couponApplied ? "적용 해제" : "쿠폰 적용"}
           </button>
         </div>
+        {tourComplete && <p className={styles.stampOffer}>동백길 완주 · 굿즈 {stampRate}% 할인 자동 적용. 쿠폰과 중복되지 않습니다.</p>}
         <p>상품 {won(subtotal)} + 배송 {won(shipping)}</p>
-        {discount > 0 && <p>쿠폰 할인 −{won(discount)}</p>}
+        {discount > 0 && <p>{stampWins ? "동백길 완주 할인" : "쿠폰 할인"} −{won(discount)}</p>}
         <strong aria-live="polite">합계 {won(subtotal + shipping - discount)}</strong>
         <p className={styles.note}>실물 상품 ₩50,000 이상 무료배송 · 결제는 제공되지 않는 시연용 장바구니입니다.</p>
       </dialog>

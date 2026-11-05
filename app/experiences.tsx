@@ -5,13 +5,13 @@ import styles from "./experiences.module.css";
 import bloom from "./bloom.module.css";
 
 type Photo = { id: string; title: string };
-type TourStop = Photo & { story: string };
+type TourStop = Photo & { story: string; stamp: string; symbol: string };
 type GiftProduct = { name: string; price: number; options: string[] };
 type GiftItem = { name: string; price: number; option: string };
 const image = (id: string) => "/bloom/" + id + ".webp";
 const won = (price: number) => price.toLocaleString("ko-KR") + "원";
 
-export function Postcard({ photos, date, setDate }: { photos: Photo[]; date: string; setDate: (date: string) => void }) {
+export function Postcard({ photos, date, setDate, completedTour }: { photos: Photo[]; date: string; setDate: (date: string) => void; completedTour: boolean }) {
   const [photoId, setPhotoId] = useState(photos[0].id);
   const [message, setMessage] = useState("");
   const [exportState, setExportState] = useState("");
@@ -46,7 +46,23 @@ export function Postcard({ photos, date, setDate }: { photos: Photo[]; date: str
       ctx.textAlign = "left";
       ctx.fillStyle = "#392b25";
       ctx.font = '42px "Malgun Gothic", sans-serif';
-      ctx.fillText(message.trim() || photo.title, 52, 797, 1096);
+      ctx.fillText(message.trim() || photo.title, 52, 797, completedTour ? 900 : 1096);
+      if (completedTour) {
+        ctx.save();
+        ctx.translate(1080, 798);
+        ctx.rotate(-0.12);
+        ctx.strokeStyle = "#9a5145";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 72, 51, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = "#9a5145";
+        ctx.textAlign = "center";
+        ctx.font = "bold 19px sans-serif";
+        ctx.fillText("BLOOM", 0, -5);
+        ctx.fillText("동백길 완주", 0, 22);
+        ctx.restore();
+      }
 
       const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
       if (!blob) throw new Error("Image export failed");
@@ -75,7 +91,10 @@ export function Postcard({ photos, date, setDate }: { photos: Photo[]; date: str
           <img src={image(photo.id)} alt={photo.title} loading="lazy" />
           <figcaption>
             <div><span>BLOOM / JEJU POSTCARD</span><time dateTime={date || undefined}>{dateLabel}</time></div>
-            <p>{message.trim() || photo.title}</p>
+            <div className={styles.postcardMessage}>
+              <p>{message.trim() || photo.title}</p>
+              {completedTour && <span className={styles.postcardStamp}>BLOOM<br />동백길 완주</span>}
+            </div>
           </figcaption>
         </figure>
         <div className={styles.fields}>
@@ -92,7 +111,13 @@ export function Postcard({ photos, date, setDate }: { photos: Photo[]; date: str
   );
 }
 
-export function PhotoTour({ stops }: { stops: TourStop[] }) {
+export function PhotoTour({ stops, stamps, onStamp, complete, discountRate }: {
+  stops: TourStop[];
+  stamps: string[];
+  onStamp: (id: string) => void;
+  complete: boolean;
+  discountRate: number;
+}) {
   const [index, setIndex] = useState(0);
   const stop = stops[index];
   return (
@@ -111,7 +136,29 @@ export function PhotoTour({ stops }: { stops: TourStop[] }) {
             <button type="button" className={bloom.outline} disabled={index === 0} onClick={() => setIndex(index - 1)}>← 이전</button>
             <button type="button" className={bloom.outline} disabled={index === stops.length - 1} onClick={() => setIndex(index + 1)}>다음 →</button>
           </div>
+          <button type="button" className={bloom.cta} disabled={stamps.includes(stop.id)} onClick={() => onStamp(stop.id)}>
+            {stamps.includes(stop.id) ? "✓ 도장 받았어요" : "도장 찍기"}
+          </button>
         </div>
+      </div>
+      <div className={styles.stampBook}>
+        <p className={bloom.eyebrow}>BLOOM STAMP BOOK</p>
+        <h3>동백길 스탬프북</h3>
+        <p className={bloom.copy}>도장 {stops.length}개를 모으면 완주 엽서와 굿즈 {discountRate}% 할인이 열려요.</p>
+        <ul className={styles.stampSlots}>
+          {stops.map(({ id, stamp, symbol }) => (
+            <li key={id} data-collected={stamps.includes(id)}>
+              <span aria-hidden="true">{stamps.includes(id) ? symbol : "○"}</span>
+              <strong>{stamp}</strong>
+              <small>{stamps.includes(id) ? "획득" : "미획득"}</small>
+            </li>
+          ))}
+        </ul>
+        <p role="status">{complete ? "동백길 완주!" : "완주까지 " + stamps.length + " / " + stops.length}</p>
+        {complete && <div className={styles.stampLinks}>
+          <a className={bloom.cta} href="#postcard">완주 엽서 만들기 ↗</a>
+          <a className={bloom.cta} href="#collection">굿즈 둘러보기 ↗</a>
+        </div>}
       </div>
     </section>
   );
