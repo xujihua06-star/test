@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import styles from "./bloom.module.css";
 import DatePicker from "./date-picker";
+import CommunityLook from "./community-look";
 import { GiftBuilder, KeyringPreview, PhotoTour, Postcard } from "./experiences";
 
 const sections = [
@@ -387,6 +388,7 @@ export default function Home() {
           <p className={styles.eyebrow}>04 / YOUR MOMENTS</p>
           <h2>Share your bloom.</h2>
           <p className={styles.copy}>당신이 만난 동백마을의 순간을 사진으로 남겨 보세요.</p>
+          <CommunityLook />
           <form className={styles.upload} onSubmit={showPreview}>
             <label>사진 제목<input name="title" placeholder="제주의 어느 오후" required /></label>
             <label>닉네임<input name="nickname" placeholder="닉네임" required /></label>

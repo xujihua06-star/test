@@ -50,3 +50,18 @@
 .stampReward code { display: block; margin-block: 3px; color: var(--ink); font-size: 24px; font-weight: 700; letter-spacing: .08em; }
 .cardPreview figcaption .postcardMessage { align-items: end; color: var(--ink); letter-spacing: normal; }
 .postcardStamp { flex: 0 0 auto; border: 2px solid var(--accent); border-radius: 50%; padding: 6px 8px; color: var(--accent); text-align: center; transform: rotate(-7deg); }
+
+.communityLook { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1fr); align-items: start; max-width: 1000px; margin: 28px auto; border: 1px solid var(--line); background: var(--paper); text-align: left; }
+.communityLook > img { display: block; width: 100%; height: auto; }
+.communityLookBody { min-width: 0; padding: clamp(16px, 4vw, 34px); }
+.communityLook h3 { margin: 5px 0 10px; font-size: clamp(21px, 3vw, 32px); font-weight: 700; }
+.communityLook h4 { margin-top: 18px; font-weight: 700; }
+.lookReactions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.lookReactions button[aria-pressed="true"] { border-color: var(--accent); background: #f4e4df; color: var(--accent); }
+.lookComments { margin: 0 0 16px; padding: 0; list-style: none; }
+.lookComments li { padding: 8px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; font-size: 13px; }
+.lookComments small { color: var(--muted); }
+.lookComments p { margin: 4px 0 0; }
+@media (max-width: 760px) {
+  .communityLook { grid-template-columns: minmax(0, 1fr); }
+}
