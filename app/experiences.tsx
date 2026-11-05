@@ -148,7 +148,7 @@ export function PhotoTour({ stops, stamps, onStamp, complete, discountRate }: {
         <ul className={styles.stampSlots}>
           {stops.map(({ id, stamp, symbol }) => (
             <li key={id} data-collected={stamps.includes(id)}>
-              <img src={image(id)} alt="" loading="lazy" />
+              <img src={image("stamp-" + id)} alt="" loading="lazy" />
               <span aria-hidden="true">{stamps.includes(id) ? symbol : "○"}</span>
               <strong>{stamp}</strong>
               <small>{stamps.includes(id) ? "획득" : "미획득"}</small>
