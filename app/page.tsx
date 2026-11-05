@@ -31,10 +31,12 @@ const photos = [
 ];
 
 const products = [
-  { id: "cardigan", label: "01 / WEAR", name: "플라워 가디건", price: 59000, options: ["S", "M", "L"] },
-  { id: "puzzle", label: "02 / PLAY", name: "BLOOM 퍼즐", price: 24000, options: ["퍼즐 + 보관 패키지"] },
-  { id: "keyring", label: "03 / KEEP", name: "BLOOM 키링", price: 9000, options: ["Camellia Pink", "Nature Lime", "Jeju Blue"] },
+  { id: "cardigan", label: "01 / WEAR", name: "플라워 가디건", price: 62000, options: ["S", "M", "L"] },
+  { id: "puzzle", label: "02 / PLAY", name: "BLOOM 퍼즐", price: 25000, options: ["퍼즐 + 보관 패키지"] },
+  { id: "keyring", label: "03 / KEEP", name: "BLOOM 키링", price: 9900, options: ["Camellia Pink", "Nature Lime", "Jeju Blue"] },
 ];
+const editorial = { name: "동백꽃 바다의 BLOOM 패션 화보", price: 7900, option: "디지털 이미지", digital: true };
+type BagItem = { name: string; price: number; option: string; digital?: boolean };
 
 const categories = ["전체", "동백꽃", "마을 풍경", "제주 자연", "저장한 사진"];
 const highlights = [
@@ -60,7 +62,7 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>();
-  const [bag, setBag] = useState<{ name: string; price: number; option: string }[]>([]);
+  const [bag, setBag] = useState<BagItem[]>([]);
   const [preview, setPreview] = useState<{ title: string; urls: string[] }>();
   const [message, setMessage] = useState("");
   const photoDialog = useRef<HTMLDialogElement>(null);
@@ -113,7 +115,13 @@ export default function Home() {
     return matchesCategory && title.toLowerCase().includes(query.trim().toLowerCase());
   });
   const subtotal = bag.reduce((total, item) => total + item.price, 0);
-  const shipping = subtotal > 0 && subtotal < 50000 ? 3000 : 0;
+  const physicalSubtotal = bag.reduce((total, item) => total + (item.digital ? 0 : item.price), 0);
+  const shipping = physicalSubtotal > 0 && physicalSubtotal < 50000 ? 3000 : 0;
+
+  function addToBag(item: BagItem) {
+    setBag((items) => [...items, item]);
+    bagDialog.current?.showModal();
+  }
 
   return (
     <div className={styles.site}>
@@ -206,7 +214,7 @@ export default function Home() {
         </section>
 
         <section className={styles.collection + " " + styles.section} id="collection">
-          <Heading label="02 / THE COLLECTION" title="Take Jeju Home.">제주의 기억을 오래 간직하는<br />세 가지 작은 방법.</Heading>
+          <Heading label="02 / THE COLLECTION" title="Take Jeju Home.">제주의 기억을 오래 간직하는<br />BLOOM 소품과 패션 화보.</Heading>
           <div className={styles.grid}>
             {products.map((product) => (
               <article className={styles.card} key={product.id}>
@@ -214,8 +222,7 @@ export default function Home() {
                 <form className={styles.cardBody} onSubmit={(event) => {
                   event.preventDefault();
                   const option = String(new FormData(event.currentTarget).get("option"));
-                  setBag((items) => [...items, { name: product.name, price: product.price, option }]);
-                  bagDialog.current?.showModal();
+                  addToBag({ name: product.name, price: product.price, option });
                 }}>
                   <p className={styles.eyebrow}>{product.label}</p><h3>{product.name}</h3><p className={styles.copy}>{won(product.price)}</p>
                   <select name="option" aria-label={product.name + " 옵션"}>{product.options.map((option) => <option key={option}>{option}</option>)}</select>
@@ -224,6 +231,16 @@ export default function Home() {
               </article>
             ))}
           </div>
+          <article className={styles.editorial}>
+            <img src={asset("fashion-editorial")} alt="제주 바다와 동백꽃을 배경으로 한 BLOOM 패션 화보와 소품 디테일" loading="lazy" />
+            <div>
+              <p className={styles.eyebrow}>04 / FASHION EDITORIAL</p>
+              <h3>{editorial.name}</h3>
+              <p className={styles.copy}>동백이 핀 제주 바다를 배경으로 BLOOM의 스타일을 담은 세로형 화보 이미지입니다.</p>
+              <p className={styles.editorialStatus}>{won(editorial.price)} · 디지털 이미지</p>
+              <button className={styles.cta} onClick={() => addToBag(editorial)}>ADD TO BAG <span aria-hidden="true">↗</span></button>
+            </div>
+          </article>
           <p className={styles.note}>상품과 가격은 시연용입니다. 장바구니에서 예상 배송비와 합계를 확인할 수 있습니다.</p>
         </section>
 
@@ -276,7 +293,7 @@ export default function Home() {
         ) : <p>장바구니가 비어 있습니다.</p>}
         <p>상품 {won(subtotal)} + 배송 {won(shipping)}</p>
         <strong>합계 {won(subtotal + shipping)}</strong>
-        <p className={styles.note}>₩50,000 이상 무료배송 · 결제는 제공되지 않는 시연용 장바구니입니다.</p>
+        <p className={styles.note}>실물 상품 ₩50,000 이상 무료배송 · 결제는 제공되지 않는 시연용 장바구니입니다.</p>
       </dialog>
     </div>
   );
