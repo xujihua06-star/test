@@ -6,12 +6,12 @@ import DatePicker from "./date-picker";
 import { GiftBuilder, KeyringPreview, PhotoTour, Postcard } from "./experiences";
 
 const sections = [
-  ["village", "동백마을 갤러리"],
-  ["postcard", "제주 엽서"],
+  ["village", "VILLAGE GALLERY"],
+  ["postcard", "JEJU POSTCARD"],
   ["collection", "COLLECTION"],
-  ["photo-tour", "포토 투어"],
+  ["photo-tour", "PHOTO TOUR"],
   ["community", "COMMUNITY"],
-  ["calendar", "날짜 선택"],
+  ["calendar", "CALENDAR"],
 ];
 
 const archive = [
