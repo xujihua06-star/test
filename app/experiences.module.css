@@ -42,6 +42,8 @@
 .stampSlots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 18px 0; padding: 0; list-style: none; }
 .stampSlots li { display: grid; justify-items: center; gap: 4px; padding: 10px 4px; border: 1px dashed var(--line); text-align: center; font-size: 13px; }
 .stampSlots li[data-collected="true"] { border-color: var(--accent); background: #f4e7dc; color: var(--accent); }
+.stampSlots img { display: block; width: min(100%, 150px); aspect-ratio: 4 / 3; object-fit: cover; border-radius: 4px; margin-bottom: 4px; }
+.stampSlots li[data-collected="false"] img { filter: grayscale(1); opacity: .55; }
 .stampSlots li > span { font-size: 25px; line-height: 1; }
 .stampLinks { display: flex; flex-wrap: wrap; gap: 8px; }
 .cardPreview figcaption .postcardMessage { align-items: end; color: var(--ink); letter-spacing: normal; }
