@@ -1,5 +1,25 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/fonts/cormorant-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/fonts/cormorant-italic-500.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+}
+
+:root {
+  --bloom-display-font: "Cormorant Garamond", Georgia, "AppleMyungjo", Batang, "바탕", serif;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 88px;

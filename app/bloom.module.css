@@ -27,7 +27,7 @@
   border-bottom: 1px solid var(--line);
 }
 
-.brand { font: 700 29px Georgia, serif; letter-spacing: .11em; }
+.brand { font: 600 32px/1 var(--bloom-display-font); letter-spacing: .08em; }
 .brand span { color: var(--accent); }
 .header nav a, .mobile a { font-size: 11px; font-weight: 700; letter-spacing: .11em; }
 .header nav a:hover, .mobile a:hover { color: var(--accent); }
@@ -100,11 +100,11 @@
 .eyebrow { margin: 0; color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .19em; line-height: 1.6; }
 .hero h1 {
   margin: 24px 0 30px;
-  font: 400 clamp(70px, 10.2vw, 156px)/.8 Georgia, serif;
+  font: 500 clamp(70px, 10.2vw, 156px)/.84 var(--bloom-display-font);
   letter-spacing: -.105em;
 }
 .hero h1 em, .hero h1 span { color: #ab5b4c; }
-.tagline { margin: 0 0 16px; font-size: clamp(25px, 3vw, 39px); font-weight: 500; letter-spacing: -.075em; line-height: 1.25; }
+.tagline { margin: 0 0 16px; font-family: var(--bloom-display-font); font-size: clamp(25px, 3vw, 39px); font-weight: 500; letter-spacing: -.055em; line-height: 1.25; }
 .copy { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.85; }
 .heroImage { display: block; width: 100%; height: 100%; min-height: clamp(530px, 47vw, 680px); object-fit: cover; }
 .heroIndex { position: absolute; right: 20px; bottom: 20px; padding: 9px 11px; background: var(--paper); font-size: 10px; letter-spacing: .16em; }
@@ -127,7 +127,7 @@
 
 .section { padding: clamp(58px, 7vw, 108px) var(--gutter); }
 .heading { display: flex; align-items: end; justify-content: space-between; gap: 25px; margin-bottom: 30px; }
-.site h2 { margin: 10px 0 0; font: 400 clamp(39px, 5.2vw, 79px)/1.02 Georgia, "Malgun Gothic", serif; letter-spacing: -.065em; }
+.site h2 { margin: 10px 0 0; font: 500 clamp(39px, 5.2vw, 79px)/1.02 var(--bloom-display-font); letter-spacing: -.045em; }
 .heading .copy { max-width: 320px; }
 .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2vw, 25px); }
 .archiveTile { margin: 0; overflow: hidden; }
