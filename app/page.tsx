@@ -48,6 +48,7 @@ const tourStops = [
 type BagProduct = { name: string; price: number; option: string };
 type BagItem = BagProduct & { quantity: number };
 const bagKey = "bloom-bag-v1";
+const coupon = { minimum: 50000, amount: 5000 };
 
 const categories = ["전체", "동백꽃", "마을 풍경", "제주 자연", "저장한 사진"];
 const highlights = [
@@ -75,6 +76,7 @@ export default function Home() {
   const [selected, setSelected] = useState<string[]>();
   const [bag, setBag] = useState<BagItem[]>([]);
   const [bagLoaded, setBagLoaded] = useState(false);
+  const [couponApplied, setCouponApplied] = useState(false);
   const [preview, setPreview] = useState<{ title: string; urls: string[] }>();
   const [message, setMessage] = useState("");
   const [postcardDate, setPostcardDate] = useState("");
@@ -156,6 +158,8 @@ export default function Home() {
   const subtotal = bag.reduce((total, item) => total + item.price * item.quantity, 0);
   const bagCount = bag.reduce((total, item) => total + item.quantity, 0);
   const shipping = subtotal > 0 && subtotal < 50000 ? 3000 : 0;
+  const couponEligible = subtotal >= coupon.minimum;
+  const discount = couponApplied && couponEligible ? coupon.amount : 0;
 
   function addToBag(...additions: BagProduct[]) {
     setBag((current) => additions.reduce((items, item) => {
@@ -365,8 +369,20 @@ export default function Home() {
             </li>
           ))}</ul>
         ) : <p>장바구니가 비어 있습니다.</p>}
+        <div className={styles.bagCoupon}>
+          <div>
+            <strong>{won(coupon.amount)} 할인 쿠폰</strong>
+            <p role="status">{!couponEligible
+              ? `상품 금액 ${won(coupon.minimum - subtotal)} 더 담으면 사용 가능`
+              : couponApplied ? "쿠폰이 적용되었습니다." : `상품 합계 ${won(coupon.minimum)} 이상 구매 시 사용 가능`}</p>
+          </div>
+          <button className={styles.outline} type="button" disabled={!couponEligible && !couponApplied} onClick={() => setCouponApplied(!couponApplied)}>
+            {couponApplied ? "적용 해제" : "쿠폰 적용"}
+          </button>
+        </div>
         <p>상품 {won(subtotal)} + 배송 {won(shipping)}</p>
-        <strong>합계 {won(subtotal + shipping)}</strong>
+        {discount > 0 && <p>쿠폰 할인 −{won(discount)}</p>}
+        <strong aria-live="polite">합계 {won(subtotal + shipping - discount)}</strong>
         <p className={styles.note}>실물 상품 ₩50,000 이상 무료배송 · 결제는 제공되지 않는 시연용 장바구니입니다.</p>
       </dialog>
     </div>
