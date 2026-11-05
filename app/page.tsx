@@ -1,7 +1,243 @@
-export default function Home() {
+"use client";
+
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import styles from "./bloom.module.css";
+
+const sections = [
+  ["village", "동백마을 갤러리"],
+  ["archive", "GALLERY"],
+  ["collection", "COLLECTION"],
+  ["story", "OUR STORY"],
+  ["community", "COMMUNITY"],
+];
+
+const archive = [
+  ["archive-camellia", "CAMELLIA MOMENTS", "동백꽃의 순간"],
+  ["archive-bloom", "BLOOM IN JEJU", "제주에 피어난 꽃"],
+  ["archive-village", "VILLAGE STORIES", "동백마을 이야기"],
+];
+
+const photos = [
+  ["camellia", "햇살에 핀 붉은 동백", "동백꽃", "짙은 초록 잎 사이로 피어난 동백꽃"],
+  ["stone-house", "동백이 있는 돌담집", "마을 풍경", "동백나무와 제주 돌담이 어우러진 집"],
+  ["sea", "제주의 푸른 바다", "제주 자연", "유채꽃 너머로 펼쳐지는 제주 바다"],
+  ["alley", "동백꽃이 흐르는 골목", "마을 풍경", "붉은 꽃이 이어지는 조용한 돌담길"],
+  ["sunset", "노을빛 제주 해안", "제주 자연", "하루 끝의 따뜻한 바다 풍경"],
+  ["meadow", "바람 부는 초원", "제주 자연", "바람과 풍차가 있는 제주 들판"],
+  ["village-road", "마을로 가는 길", "마을 풍경", "돌담과 동백이 반기는 마을길"],
+  ["dolhareubang", "동백과 돌하르방", "동백꽃", "제주의 상징과 동백꽃이 만난 풍경"],
+  ["tangerine", "귤나무 아래 돌집", "마을 풍경", "귤나무와 오래된 제주 돌집"],
+  ["lighthouse", "해안의 작은 등대", "제주 자연", "푸른 바다와 흰 등대가 있는 풍경"],
+];
+
+const products = [
+  { id: "cardigan", label: "01 / WEAR", name: "플라워 가디건", price: 59000, options: ["S", "M", "L"] },
+  { id: "puzzle", label: "02 / PLAY", name: "BLOOM 퍼즐", price: 24000, options: ["퍼즐 + 보관 패키지"] },
+  { id: "keyring", label: "03 / KEEP", name: "BLOOM 키링", price: 9000, options: ["Camellia Pink", "Nature Lime", "Jeju Blue"] },
+];
+
+const categories = ["전체", "동백꽃", "마을 풍경", "제주 자연", "저장한 사진"];
+const favoritesKey = "bloom-favorites";
+const asset = (name: string) => "/bloom/" + name + ".webp";
+const won = (amount: number) => "₩" + amount.toLocaleString("ko-KR");
+
+function Heading({ label, title, children }: { label: string; title: string; children: ReactNode }) {
   return (
-    <main className="grid min-h-dvh place-items-center bg-sky-100 px-4 text-center text-slate-900">
-      <h1 className="text-4xl font-bold sm:text-6xl">제주 숙소 예약</h1>
-    </main>
+    <div className={styles.heading}>
+      <div><p className={styles.eyebrow}>{label}</p><h2>{title}</h2></div>
+      <p className={styles.copy}>{children}</p>
+    </div>
+  );
+}
+
+export default function Home() {
+  const [category, setCategory] = useState("전체");
+  const [query, setQuery] = useState("");
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string[]>();
+  const [bag, setBag] = useState<{ name: string; price: number; option: string }[]>([]);
+  const [preview, setPreview] = useState<{ title: string; urls: string[] }>();
+  const [message, setMessage] = useState("");
+  const photoDialog = useRef<HTMLDialogElement>(null);
+  const bagDialog = useRef<HTMLDialogElement>(null);
+  const previewUrls = useRef<string[]>([]);
+
+  useEffect(() => {
+    try {
+      const stored: unknown = JSON.parse(localStorage.getItem(favoritesKey) ?? "[]");
+      if (Array.isArray(stored)) setFavorites(stored.filter((item): item is string => typeof item === "string"));
+    } catch {
+      // The gallery remains available when storage is disabled.
+    }
+    return () => previewUrls.current.forEach((url) => URL.revokeObjectURL(url));
+  }, []);
+
+  function savePhoto(id: string) {
+    const next = favorites.includes(id) ? favorites.filter((item) => item !== id) : [...favorites, id];
+    setFavorites(next);
+    try {
+      localStorage.setItem(favoritesKey, JSON.stringify(next));
+    } catch {
+      // Keep the selection in memory for this visit.
+    }
+  }
+
+  function showPreview(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const title = String(data.get("title") ?? "").trim();
+    const nickname = String(data.get("nickname") ?? "").trim();
+    const files = data.getAll("photos").filter((item): item is File => item instanceof File && item.name !== "");
+    if (!title || !nickname) {
+      setMessage("사진 제목과 닉네임을 입력해 주세요.");
+      return;
+    }
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+    if (!files.length || files.length > 5 || files.some((file) => !allowed.includes(file.type) || file.size > 10 * 1024 * 1024)) {
+      setMessage("JPG, PNG, WebP 사진을 장당 10MB 이하로 1~5장 선택해 주세요.");
+      return;
+    }
+    previewUrls.current.forEach((url) => URL.revokeObjectURL(url));
+    previewUrls.current = files.map((file) => URL.createObjectURL(file));
+    setPreview({ title: title + " · " + nickname, urls: previewUrls.current });
+    setMessage("");
+  }
+
+  const visiblePhotos = photos.filter(([id, title, group]) => {
+    const matchesCategory = category === "전체" || group === category || (category === "저장한 사진" && favorites.includes(id));
+    return matchesCategory && title.toLowerCase().includes(query.trim().toLowerCase());
+  });
+  const subtotal = bag.reduce((total, item) => total + item.price, 0);
+  const shipping = subtotal > 0 && subtotal < 50000 ? 3000 : 0;
+
+  return (
+    <div className={styles.site}>
+      <header className={styles.header}>
+        <a className={styles.brand} href="#home">BLOOM<span>.</span></a>
+        <nav aria-label="주 메뉴">
+          {sections.map(([id, label]) => <a key={id} href={"#" + id}>{label}</a>)}
+        </nav>
+        <button className={styles.outline} onClick={() => bagDialog.current?.showModal()} aria-label={"장바구니 " + bag.length + "개"}>BAG <span>{bag.length}</span></button>
+      </header>
+      <main>
+        <section className={styles.hero} id="home">
+          <div className={styles.intro}>
+            <p className={styles.eyebrow}>JEJU DONGBAEK VILLAGE</p>
+            <h1>BL<em>OO</em>M<span>.</span></h1>
+            <p className={styles.tagline}>제주의 순간을,<br />일상에 피우다.</p>
+            <p className={styles.copy}>동백마을의 아름다운 풍경을 기록하고<br />작은 마을의 이야기를 일상으로 가져가세요.</p>
+            <a className={styles.cta} href="#archive">EXPLORE THE STORY <span aria-hidden="true">↗</span></a>
+          </div>
+          <img className={styles.heroImage} src={asset("hero")} alt="BLOOM 제주 동백마을 캠페인" fetchPriority="high" />
+          <span className={styles.heroIndex}>01 / JEJU ISLAND</span>
+        </section>
+
+        <section className={styles.section} id="archive">
+          <Heading label="01 / THE ARCHIVE" title="Moments of Jeju.">동백이 피어나는 순간부터 마을의 일상까지,<br />제주의 장면을 담았습니다.</Heading>
+          <div className={styles.grid}>
+            {archive.map(([id, label, alt], index) => (
+              <figure className={styles.archiveTile} key={id}>
+                <img src={asset(id)} alt={alt} loading="lazy" />
+                <figcaption><span>0{index + 1} /</span> {label}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.village + " " + styles.section} id="village">
+          <Heading label="JEJU DONGBAEK VILLAGE / PHOTO ARCHIVE" title="동백마을 갤러리.">꽃이 피는 골목, 제주의 바람, 마을의 일상.<br />동백마을의 순간을 사진으로 만나보세요.</Heading>
+          <div className={styles.controls}>
+            <div className={styles.filters} aria-label="사진 분류">
+              {categories.map((item) => <button type="button" key={item} aria-pressed={category === item} onClick={() => setCategory(item)}>{item === "저장한 사진" ? "♡ " : ""}{item}</button>)}
+            </div>
+            <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="사진 제목 검색" aria-label="사진 제목 검색" />
+          </div>
+          <div className={styles.grid}>
+            {visiblePhotos.map((photo) => {
+              const [id, title, group, description] = photo;
+              const saved = favorites.includes(id);
+              return (
+                <article className={styles.card} key={id}>
+                  <button className={styles.photoButton} aria-label={title + " 확대"} onClick={() => { setSelected(photo); photoDialog.current?.showModal(); }}>
+                    <img src={asset(id)} alt={title} loading="lazy" />
+                  </button>
+                  <div className={styles.cardBody}>
+                    <p className={styles.eyebrow}>{group}</p><h3>{title}</h3><p className={styles.copy}>{description}</p>
+                    <button className={styles.outline} aria-pressed={saved} onClick={() => savePhoto(id)}>{saved ? "♥ 저장됨" : "♡ 즐겨찾기"}</button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+          {!visiblePhotos.length && <p className={styles.empty} role="status">조건에 맞는 사진이 없습니다.</p>}
+          <p className={styles.note}>갤러리의 풍경은 시연용 예시 이미지입니다. 즐겨찾기는 현재 브라우저에 저장됩니다.</p>
+        </section>
+
+        <section className={styles.collection + " " + styles.section} id="collection">
+          <Heading label="02 / THE COLLECTION" title="Take Jeju Home.">제주의 기억을 오래 간직하는<br />세 가지 작은 방법.</Heading>
+          <div className={styles.grid}>
+            {products.map((product) => (
+              <article className={styles.card} key={product.id}>
+                <img src={asset(product.id)} alt={product.name} loading="lazy" />
+                <form className={styles.cardBody} onSubmit={(event) => {
+                  event.preventDefault();
+                  const option = String(new FormData(event.currentTarget).get("option"));
+                  setBag((items) => [...items, { name: product.name, price: product.price, option }]);
+                  bagDialog.current?.showModal();
+                }}>
+                  <p className={styles.eyebrow}>{product.label}</p><h3>{product.name}</h3><p className={styles.copy}>{won(product.price)}</p>
+                  <select name="option" aria-label={product.name + " 옵션"}>{product.options.map((option) => <option key={option}>{option}</option>)}</select>
+                  <button className={styles.cta}>ADD TO BAG <span aria-hidden="true">↗</span></button>
+                </form>
+              </article>
+            ))}
+          </div>
+          <p className={styles.note}>상품과 가격은 시연용입니다. 장바구니에서 예상 배송비와 합계를 확인할 수 있습니다.</p>
+        </section>
+
+        <section className={styles.story + " " + styles.section} id="story">
+          <img src={asset("story")} alt="제주 동백마을에서 영감을 받은 BLOOM 이야기" loading="lazy" />
+          <div>
+            <p className={styles.eyebrow}>03 / OUR STORY</p>
+            <h2>A little village,<br />a lot of bloom.</h2>
+            <p className={styles.copy}>제주 동백마을의 소박한 풍경에서 시작된 BLOOM.<br />꽃이 피어나는 순간처럼 여행의 기억도 저마다의 방식으로 오래 남습니다.</p>
+            <a href="#community" className={styles.cta}>SHARE YOUR MOMENT <span aria-hidden="true">↗</span></a>
+          </div>
+        </section>
+
+        <section className={styles.community + " " + styles.section} id="community">
+          <p className={styles.eyebrow}>04 / YOUR MOMENTS</p>
+          <h2>Share your bloom.</h2>
+          <p className={styles.copy}>당신이 만난 동백마을의 순간을 사진으로 남겨 보세요.</p>
+          <form className={styles.upload} onSubmit={showPreview}>
+            <label>사진 제목<input name="title" placeholder="제주의 어느 오후" required /></label>
+            <label>닉네임<input name="nickname" placeholder="닉네임" required /></label>
+            <label>사진 선택<input name="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple required /></label>
+            <button className={styles.cta}>사진 미리보기 <span aria-hidden="true">↗</span></button>
+            <p className={styles.note}>최대 5장, 장당 10MB. 사진은 현재 기기에서 미리보기로 표시됩니다.</p>
+            {message && <p role="alert">{message}</p>}
+          </form>
+          {preview && <div className={styles.preview}><h3>{preview.title}</h3><div>{preview.urls.map((url, index) => <img key={url} src={url} alt={"선택한 사진 " + (index + 1)} />)}</div></div>}
+        </section>
+      </main>
+
+      <footer className={styles.footer}><div><a className={styles.brand} href="#home">BLOOM.</a><p>제주의 순간을, 일상에 피우다.</p></div><p>JEJU DONGBAEK VILLAGE<br />© 2026 BLOOM · 시연용</p></footer>
+      <nav className={styles.mobile} aria-label="모바일 메뉴"><a href="#home">HOME</a><a href="#village">동백마을</a><a href="#collection">SHOP</a><a href="#community">COMMUNITY</a></nav>
+
+      <dialog className={styles.lightbox} ref={photoDialog} aria-label="사진 확대">
+        <form method="dialog"><button className={styles.outline}>닫기 ✕</button></form>
+        {selected && <figure><img src={asset(selected[0])} alt={selected[1]} /><figcaption>{selected[1]} · {selected[3]}</figcaption></figure>}
+      </dialog>
+      <dialog className={styles.bag} ref={bagDialog} aria-labelledby="bag-title">
+        <form method="dialog"><button className={styles.outline} aria-label="장바구니 닫기">✕</button></form>
+        <h2 id="bag-title">Your Bag.</h2>
+        {bag.length ? (
+          <ul>{bag.map((item, index) => <li key={index}><div>{item.name}<br /><small>{item.option}</small></div><span>{won(item.price)}</span><button className={styles.outline} onClick={() => setBag((items) => items.filter((_, position) => position !== index))}>삭제</button></li>)}</ul>
+        ) : <p>장바구니가 비어 있습니다.</p>}
+        <p>상품 {won(subtotal)} + 배송 {won(shipping)}</p>
+        <strong>합계 {won(subtotal + shipping)}</strong>
+        <p className={styles.note}>₩50,000 이상 무료배송 · 결제는 제공되지 않는 시연용 장바구니입니다.</p>
+      </dialog>
+    </div>
   );
 }
