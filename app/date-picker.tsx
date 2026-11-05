@@ -77,6 +77,10 @@ export default function DatePicker() {
             );
           })}
         </div>
+        <form action="/calendar/complete" method="get" className={styles.calendarConfirm}>
+          <input type="hidden" name="date" value={selected ? dayKey(selected) : ""} />
+          <button type="submit" className={styles.cta} disabled={!selected}>선택하기 <span aria-hidden="true">→</span></button>
+        </form>
       </div>
     </section>
   );

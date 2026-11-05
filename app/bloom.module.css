@@ -299,3 +299,8 @@
 .calendarCheck { position: absolute; top: 1px; right: 3px; font-size: 10px; }
 .calendarSelection { flex-wrap: wrap; margin-bottom: 16px; padding: 12px; border: 1px solid var(--line); background: #f4e7dc; text-align: left; }
 .calendarSelection strong { display: block; margin-top: 3px; font-size: clamp(16px, 4vw, 21px); }
+.calendarConfirm .cta { width: 100%; justify-content: center; margin-top: 0; }
+.calendarConfirm .cta:disabled { opacity: .48; cursor: default; background: var(--ink); }
+.calendarCompletePage { min-height: 100dvh; display: grid; place-items: center; padding: 20px; background: #f9f2e7; }
+.calendarCompletion { width: min(100%, 500px); padding: clamp(24px, 7vw, 52px); border: 1px solid var(--line); background: var(--paper); text-align: center; }
+.calendarCompletion h1 { margin: 10px 0 14px; font-size: clamp(25px, 6vw, 40px); font-weight: 700; }
