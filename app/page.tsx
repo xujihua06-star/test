@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "rea
 import styles from "./bloom.module.css";
 
 const sections = [
+  ["film", "FILM"],
   ["village", "동백마을 갤러리"],
   ["archive", "GALLERY"],
   ["collection", "COLLECTION"],
@@ -134,10 +135,25 @@ export default function Home() {
             <div className={styles.heroActions}>
               <a className={styles.cta} href="#village">동백마을 둘러보기 <span aria-hidden="true">↗</span></a>
               <a className={styles.textLink} href="#collection">컬렉션 보기 <span aria-hidden="true">→</span></a>
+              <a className={styles.textLink} href="#film">광고 영상 보기 <span aria-hidden="true">▶</span></a>
             </div>
           </div>
           <img className={styles.heroImage} src={asset("hero")} alt="BLOOM 제주 동백마을 캠페인" fetchPriority="high" />
           <span className={styles.heroIndex}>01 / JEJU ISLAND</span>
+        </section>
+
+        <section className={styles.film + " " + styles.section} id="film" aria-labelledby="film-title">
+          <div className={styles.heading}>
+            <div>
+              <p className={styles.eyebrow}>BLOOM FILM / 00:18</p>
+              <h2 id="film-title">Where Jeju blooms.</h2>
+            </div>
+            <p className={styles.copy}>동백이 핀 돌담길에서 세 가지 꽃 키링까지.<br />제주의 순간을 담은 18초 무음 영상입니다.</p>
+          </div>
+          <video controls playsInline preload="none" poster={asset("bloom-film")} aria-labelledby="film-title">
+            <source src="/bloom/bloom-film.mp4" type="video/mp4" />
+            <a href="/bloom/bloom-film.mp4">BLOOM 광고 영상 열기</a>
+          </video>
         </section>
 
         <section className={styles.highlights + " " + styles.section} aria-labelledby="highlights-title">

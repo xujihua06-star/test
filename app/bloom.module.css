@@ -185,6 +185,16 @@
   margin-top: 24px;
 }
 .heroActions .cta { margin-top: 0; }
+.film { background: #332620; color: #fff8ef; }
+.film .eyebrow { color: #f1b99e; }
+.film .copy { color: #ead8ca; }
+.film video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid #82685b;
+  background: #1c1410;
+}
 .site .textLink {
   display: inline-flex;
   gap: 8px;
