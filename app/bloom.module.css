@@ -44,6 +44,8 @@
 .header .outline { min-width: 80px; letter-spacing: .1em; }
 .header .outline span { margin-left: 6px; color: var(--accent); }
 .headerTools { display: flex; flex-wrap: wrap; align-items: center; justify-content: end; gap: 5px 12px; }
+.accountWelcome { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; padding: 16px var(--gutter); border-bottom: 1px solid var(--line); background: #f4e7dc; }
+.accountWelcome strong { display: block; margin-top: 4px; font-size: clamp(17px, 3vw, 24px); overflow-wrap: anywhere; }
 @media (max-width: 980px) {
   .header { gap: 10px; }
   .header nav { gap: 10px; }

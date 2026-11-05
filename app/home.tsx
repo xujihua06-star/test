@@ -77,7 +77,7 @@ function Heading({ label, title, children }: { label: string; title: string; chi
   );
 }
 
-export default function Home({ account }: { account: ReactNode }) {
+export default function Home({ account, welcome }: { account: ReactNode; welcome: ReactNode }) {
   const [category, setCategory] = useState("전체");
   const [query, setQuery] = useState("");
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -224,6 +224,7 @@ export default function Home({ account }: { account: ReactNode }) {
         </div>
       </header>
       <main>
+        {welcome}
         <section className={styles.hero} id="home">
           <div className={styles.intro}>
             <p className={styles.eyebrow}>JEJU DONGBAEK VILLAGE</p>
