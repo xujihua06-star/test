@@ -78,6 +78,30 @@ function Heading({ label, title, children }: { label: string; title: string; chi
 }
 
 export default function Home({ account, welcome }: { account: ReactNode; welcome: ReactNode }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuButton = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    function dismissOutside(event: PointerEvent) {
+      if (event.target instanceof Node && !menuRef.current?.contains(event.target)) setMenuOpen(false);
+    }
+
+    function dismissOnEscape(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      setMenuOpen(false);
+      menuButton.current?.focus();
+    }
+
+    document.addEventListener("pointerdown", dismissOutside);
+    document.addEventListener("keydown", dismissOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", dismissOutside);
+      document.removeEventListener("keydown", dismissOnEscape);
+    };
+  }, [menuOpen]);
   const [category, setCategory] = useState("전체");
   const [query, setQuery] = useState("");
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -215,10 +239,26 @@ export default function Home({ account, welcome }: { account: ReactNode; welcome
     <div className={styles.site}>
       <header className={styles.header}>
         <a className={styles.brand} href="#home">BLOOM<span>.</span></a>
-        <nav aria-label="주 메뉴">
-          {sections.map(([id, label]) => <a key={id} href={"#" + id}>{label}</a>)}
-        </nav>
         <div className={styles.headerTools}>
+          <div ref={menuRef}>
+            <button
+              ref={menuButton}
+              className={styles.outline}
+              type="button"
+              aria-expanded={menuOpen}
+              aria-controls="bloom-navigation"
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              MENU <span aria-hidden="true">{menuOpen ? "×" : "☰"}</span>
+            </button>
+            <nav id="bloom-navigation" className={styles.headerMenu} aria-label="주 메뉴" hidden={!menuOpen}>
+              {sections.map(([id, label]) => (
+                <a key={id} href={"#" + id} onClick={() => setMenuOpen(false)}>
+                  {label} <span aria-hidden="true">↗</span>
+                </a>
+              ))}
+            </nav>
+          </div>
           {account}
           <button className={styles.outline} onClick={() => bagDialog.current?.showModal()} aria-label={"장바구니 " + bagCount + "개"}>BAG <span>{bagCount}</span></button>
         </div>
