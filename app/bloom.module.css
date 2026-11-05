@@ -291,10 +291,11 @@
 .calendarHeader h3 { margin: 0; font-size: clamp(16px, 4vw, 22px); font-weight: 700; }
 .calendarGrid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; margin-block: 14px; }
 .weekday { padding-block: 5px; font-size: 12px; font-weight: 700; color: var(--muted); }
-.calendarDay { min-height: 38px; border: 1px solid transparent; border-radius: 4px; font-size: 14px; }
+.calendarDay { position: relative; min-height: 38px; border: 1px solid transparent; border-radius: 4px; font-size: 14px; }
 .calendarDay[data-outside] { color: var(--muted); background: #f1e9de; }
 .calendarDay:hover { background: #eee0d4; }
 .calendarDay[aria-current="date"] { border-color: var(--accent); font-weight: 700; }
 .calendarDay[aria-pressed="true"] { background: #784638; color: white; font-weight: 700; }
-.calendarSelection { flex-wrap: wrap; padding-top: 12px; border-top: 1px solid var(--line); text-align: left; }
-.calendarSelection p { margin: 0; font-size: 13px; }
+.calendarCheck { position: absolute; top: 1px; right: 3px; font-size: 10px; }
+.calendarSelection { flex-wrap: wrap; margin-bottom: 16px; padding: 12px; border: 1px solid var(--line); background: #f4e7dc; text-align: left; }
+.calendarSelection strong { display: block; margin-top: 3px; font-size: clamp(16px, 4vw, 21px); }

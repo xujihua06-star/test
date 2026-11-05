@@ -41,6 +41,13 @@ export default function DatePicker() {
       <h2 id="calendar-title">날짜 선택</h2>
       <p className={styles.copy}>달력에서 원하는 날짜를 골라 주세요.</p>
       <div className={styles.calendar}>
+        <div className={styles.calendarSelection}>
+          <div role="status">
+            <p className={styles.eyebrow}>선택한 날짜</p>
+            <strong>{selected ? dayFormat.format(selected) : "날짜를 골라 주세요"}</strong>
+          </div>
+          {selected && <button className={styles.outline} onClick={() => setSelected(undefined)}>선택 해제</button>}
+        </div>
         <div className={styles.calendarHeader}>
           <button className={styles.outline} onClick={() => moveMonth(-1)} disabled={!month} aria-label="이전 달">←</button>
           <h3 id="calendar-month" aria-live="polite">{month ? monthFormat.format(month) : "달력 불러오는 중"}</h3>
@@ -50,6 +57,7 @@ export default function DatePicker() {
           {weekdays.map((day) => <span className={styles.weekday} key={day}>{day}</span>)}
           {days.map((day) => {
             const key = dayKey(day);
+            const isSelected = selected ? dayKey(selected) === key : false;
             return (
               <button
                 key={key}
@@ -57,20 +65,17 @@ export default function DatePicker() {
                 data-outside={day.getUTCMonth() !== month?.getUTCMonth() || undefined}
                 aria-label={dayFormat.format(day)}
                 aria-current={key === today ? "date" : undefined}
-                aria-pressed={selected ? dayKey(selected) === key : false}
+                aria-pressed={isSelected}
                 onClick={() => {
                   setSelected(day);
                   setMonth(new Date(Date.UTC(day.getUTCFullYear(), day.getUTCMonth(), 1)));
                 }}
               >
                 {day.getUTCDate()}
+                {isSelected && <span className={styles.calendarCheck} aria-hidden="true">✓</span>}
               </button>
             );
           })}
-        </div>
-        <div className={styles.calendarSelection}>
-          <p role="status">{selected ? "선택한 날짜 · " + dayFormat.format(selected) : "아직 선택한 날짜가 없습니다."}</p>
-          {selected && <button className={styles.outline} onClick={() => setSelected(undefined)}>선택 해제</button>}
         </div>
       </div>
     </section>
