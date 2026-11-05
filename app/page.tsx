@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import styles from "./bloom.module.css";
+import DatePicker from "./date-picker";
 
 const sections = [
   ["village", "동백마을 갤러리"],
@@ -9,6 +10,7 @@ const sections = [
   ["collection", "COLLECTION"],
   ["story", "OUR STORY"],
   ["community", "COMMUNITY"],
+  ["calendar", "날짜 선택"],
 ];
 
 const archive = [
@@ -313,6 +315,7 @@ export default function Home() {
           </form>
           {preview && <div className={styles.preview}><h3>{preview.title}</h3><div>{preview.urls.map((url, index) => <img key={url} src={url} alt={"선택한 사진 " + (index + 1)} />)}</div></div>}
         </section>
+        <DatePicker />
       </main>
 
       <footer className={styles.footer}>
@@ -324,7 +327,7 @@ export default function Home() {
         </nav>
         <div className={styles.footerEnd}><a href="#home">맨 위로 ↑</a><p>© 2026 BLOOM · 시연용</p></div>
       </footer>
-      <nav className={styles.mobile} aria-label="모바일 메뉴"><a href="#home">HOME</a><a href="#village">동백마을</a><a href="#collection">SHOP</a><a href="#community">COMMUNITY</a></nav>
+      <nav className={styles.mobile} aria-label="모바일 메뉴"><a href="#home">HOME</a><a href="#village">동백마을</a><a href="#collection">SHOP</a><a href="#community">COMMUNITY</a><a href="#calendar">날짜 선택</a></nav>
 
       <dialog className={styles.lightbox} ref={photoDialog} aria-label="사진 확대">
         <form method="dialog"><button className={styles.outline}>닫기 ✕</button></form>
