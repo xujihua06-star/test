@@ -1,0 +1,37 @@
+.postcard { background: #f7ede3; }
+.postcardGrid, .tourCard { display: grid; grid-template-columns: 1.3fr 1fr; align-items: center; gap: clamp(18px, 4vw, 56px); margin-top: 28px; }
+.cardPreview { margin: 0; padding: clamp(10px, 2vw, 24px); border: 1px solid var(--line); background: var(--paper); box-shadow: 0 12px 28px #392b2512; }
+.cardPreview img, .tourCard img { display: block; width: 100%; aspect-ratio: 1.85; object-fit: cover; }
+.cardPreview figcaption { padding: 14px 4px 10px; }
+.cardPreview figcaption > div { display: flex; justify-content: space-between; gap: 8px; color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .07em; }
+.cardPreview p { margin: 13px 0 0; overflow-wrap: anywhere; font-size: clamp(17px, 2.2vw, 28px); }
+.fields { display: grid; gap: 12px; }
+.fields label { display: grid; gap: 5px; font-size: 13px; font-weight: 700; }
+.fields input, .fields select { width: 100%; min-width: 0; padding: 9px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); }
+.fields a, .fields button { justify-self: start; }
+.postcard .fields button, .giftTotal button { margin-top: 0; }
+.fields button:disabled, .giftTotal button:disabled, .tourControls button:disabled { opacity: .45; cursor: default; }
+
+.tour { background: #eee3d6; }
+.tourCard { overflow: hidden; gap: 0; border: 1px solid var(--line); background: var(--paper); }
+.tourContent { padding: clamp(20px, 4vw, 48px); }
+.tourContent h3 { margin: 8px 0 12px; font-size: clamp(21px, 3vw, 35px); font-weight: 700; letter-spacing: -.05em; }
+.tourControls { display: flex; gap: 10px; margin-top: 20px; }
+
+.keyringImage { position: relative; }
+.spotlight { position: absolute; inset: 0; pointer-events: none; }
+.swatches { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px 0; }
+.swatches button { display: inline-flex; align-items: center; gap: 5px; padding: 5px 7px; border: 1px solid var(--line); font-size: 11px; }
+.swatches button[aria-pressed="true"] { border-color: var(--accent); background: #f1e2d8; }
+.swatches span { width: 11px; height: 11px; border: 1px solid #392b2533; border-radius: 50%; }
+
+.gift { background: #f9f2e7; border-block: 1px solid var(--line); }
+.gift > p:nth-of-type(2) { margin-top: 14px; }
+.giftGrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 24px; }
+.giftGrid label { align-content: start; padding: 16px; border: 1px solid var(--line); background: var(--paper); }
+.giftGrid label span { color: var(--accent); font-size: 13px; }
+.giftTotal { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+@media (max-width: 760px) {
+  .postcardGrid, .tourCard { grid-template-columns: minmax(0, 1fr); }
+  .giftGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

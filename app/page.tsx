@@ -3,12 +3,13 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import styles from "./bloom.module.css";
 import DatePicker from "./date-picker";
+import { GiftBuilder, KeyringPreview, PhotoTour, Postcard } from "./experiences";
 
 const sections = [
   ["village", "동백마을 갤러리"],
-  ["archive", "GALLERY"],
+  ["postcard", "제주 엽서"],
   ["collection", "COLLECTION"],
-  ["story", "OUR STORY"],
+  ["photo-tour", "포토 투어"],
   ["community", "COMMUNITY"],
   ["calendar", "날짜 선택"],
 ];
@@ -38,6 +39,12 @@ const products = [
   { id: "keyring", label: "03 / KEEP", name: "BLOOM 키링", price: 9900, options: ["Camellia Pink", "Nature Lime", "Jeju Blue"] },
 ];
 const outfit = { name: "BLOOM 재킷·팬츠 세트", price: 129000, options: ["S", "M", "L"] };
+const postcardPhotos = photos.map(([id, title]) => ({ id, title }));
+const tourStops = [
+  { id: "alley", title: "붉은 꽃이 이어지는 돌담길", story: "검은 돌담 사이로 붉은 동백이 이어집니다. 골목을 따라가며 발밑에 내려앉은 꽃잎도 찾아보세요." },
+  { id: "camellia", title: "가까이에서 만나는 동백", story: "짙은 초록 잎 사이, 붉은 꽃잎 가운데 노란 꽃술이 보입니다. 걸음을 멈추면 멀리서는 보이지 않던 색이 드러납니다." },
+  { id: "sea", title: "골목 끝에서 만나는 바다", story: "유채꽃 너머로 바다가 펼쳐집니다. 돌담길에서 시작한 산책을 수평선을 바라보며 마무리해 보세요." },
+];
 type BagProduct = { name: string; price: number; option: string };
 type BagItem = BagProduct & { quantity: number };
 const bagKey = "bloom-bag-v1";
@@ -70,6 +77,8 @@ export default function Home() {
   const [bagLoaded, setBagLoaded] = useState(false);
   const [preview, setPreview] = useState<{ title: string; urls: string[] }>();
   const [message, setMessage] = useState("");
+  const [postcardDate, setPostcardDate] = useState("");
+  const [keyringColor, setKeyringColor] = useState(products[2].options[0]);
   const photoDialog = useRef<HTMLDialogElement>(null);
   const bagDialog = useRef<HTMLDialogElement>(null);
   const previewUrls = useRef<string[]>([]);
@@ -148,14 +157,14 @@ export default function Home() {
   const bagCount = bag.reduce((total, item) => total + item.quantity, 0);
   const shipping = subtotal > 0 && subtotal < 50000 ? 3000 : 0;
 
-  function addToBag(item: BagProduct) {
-    setBag((items) => {
+  function addToBag(...additions: BagProduct[]) {
+    setBag((current) => additions.reduce((items, item) => {
       const index = items.findIndex((entry) => entry.name === item.name && entry.option === item.option);
       if (index === -1) return [...items, { ...item, quantity: 1 }];
       return items.map((entry, position) => position === index
         ? { ...item, quantity: Math.min(entry.quantity + 1, 99) }
         : entry);
-    });
+    }, current));
     bagDialog.current?.showModal();
   }
 
@@ -255,19 +264,23 @@ export default function Home() {
           <p className={styles.note}>갤러리의 풍경은 시연용 예시 이미지입니다. 즐겨찾기는 현재 브라우저에 저장됩니다.</p>
         </section>
 
+        <PhotoTour stops={tourStops} />
+        <Postcard photos={postcardPhotos} date={postcardDate} setDate={setPostcardDate} />
         <section className={styles.collection + " " + styles.section} id="collection">
           <Heading label="02 / THE COLLECTION" title="Take Jeju Home.">제주의 기억을 오래 간직하는<br />BLOOM 의류와 소품.</Heading>
           <div className={styles.grid}>
             {products.map((product) => (
               <article className={styles.card} key={product.id}>
-                <img src={product.id === "keyring" ? "/bloom/keyring.webp?v=flower" : asset(product.id)} alt={product.name} loading="lazy" />
+                {product.id === "keyring"
+                  ? <KeyringPreview options={product.options} selected={keyringColor} onSelect={setKeyringColor} />
+                  : <img src={asset(product.id)} alt={product.name} loading="lazy" />}
                 <form className={styles.cardBody} onSubmit={(event) => {
                   event.preventDefault();
                   const option = String(new FormData(event.currentTarget).get("option"));
                   addToBag({ name: product.name, price: product.price, option });
                 }}>
                   <p className={styles.eyebrow}>{product.label}</p><h3>{product.name}</h3><p className={styles.copy}>{won(product.price)}</p>
-                  <select name="option" aria-label={product.name + " 옵션"}>{product.options.map((option) => <option key={option}>{option}</option>)}</select>
+                  <select name="option" aria-label={product.name + " 옵션"} value={product.id === "keyring" ? keyringColor : undefined} onChange={product.id === "keyring" ? (event) => setKeyringColor(event.target.value) : undefined}>{product.options.map((option) => <option key={option}>{option}</option>)}</select>
                   <button className={styles.cta}>ADD TO BAG <span aria-hidden="true">↗</span></button>
                 </form>
               </article>
@@ -291,6 +304,7 @@ export default function Home() {
           <p className={styles.note}>상품과 가격은 시연용입니다. 장바구니에서 예상 배송비와 합계를 확인할 수 있습니다.</p>
         </section>
 
+        <GiftBuilder products={[...products, outfit]} onAdd={(items) => addToBag(...items)} />
         <section className={styles.story + " " + styles.section} id="story">
           <img src={asset("story")} alt="제주 동백마을에서 영감을 받은 BLOOM 이야기" loading="lazy" />
           <div>
@@ -315,7 +329,8 @@ export default function Home() {
           </form>
           {preview && <div className={styles.preview}><h3>{preview.title}</h3><div>{preview.urls.map((url, index) => <img key={url} src={url} alt={"선택한 사진 " + (index + 1)} />)}</div></div>}
         </section>
-        <DatePicker />
+        <DatePicker onSelect={setPostcardDate} />
+        {postcardDate && <div className={styles.calendarReturn}><a className={styles.outline} href="#postcard">고른 날짜로 엽서 만들기 ↗</a></div>}
       </main>
 
       <footer className={styles.footer}>
@@ -327,7 +342,7 @@ export default function Home() {
         </nav>
         <div className={styles.footerEnd}><a href="#home">맨 위로 ↑</a><p>© 2026 BLOOM · 시연용</p></div>
       </footer>
-      <nav className={styles.mobile} aria-label="모바일 메뉴"><a href="#home">HOME</a><a href="#village">동백마을</a><a href="#collection">SHOP</a><a href="#community">COMMUNITY</a><a href="#calendar">날짜 선택</a></nav>
+      <nav className={styles.mobile} aria-label="모바일 메뉴"><a href="#home">HOME</a><a href="#photo-tour">포토 투어</a><a href="#postcard">제주 엽서</a><a href="#collection">SHOP</a><a href="#calendar">날짜 선택</a></nav>
 
       <dialog className={styles.lightbox} ref={photoDialog} aria-label="사진 확대">
         <form method="dialog"><button className={styles.outline}>닫기 ✕</button></form>

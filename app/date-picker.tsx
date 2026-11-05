@@ -12,7 +12,7 @@ function dayKey(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
-export default function DatePicker() {
+export default function DatePicker({ onSelect }: { onSelect?: (date: string) => void }) {
   const [month, setMonth] = useState<Date>();
   const [today, setToday] = useState("");
   const [selected, setSelected] = useState<Date>();
@@ -46,7 +46,7 @@ export default function DatePicker() {
             <p className={styles.eyebrow}>선택한 날짜</p>
             <strong>{selected ? dayFormat.format(selected) : "날짜를 골라 주세요"}</strong>
           </div>
-          {selected && <button className={styles.outline} onClick={() => setSelected(undefined)}>선택 해제</button>}
+          {selected && <button className={styles.outline} onClick={() => { setSelected(undefined); onSelect?.(""); }}>선택 해제</button>}
         </div>
         <div className={styles.calendarHeader}>
           <button className={styles.outline} onClick={() => moveMonth(-1)} disabled={!month} aria-label="이전 달">←</button>
@@ -68,6 +68,7 @@ export default function DatePicker() {
                 aria-pressed={isSelected}
                 onClick={() => {
                   setSelected(day);
+                  onSelect?.(key);
                   setMonth(new Date(Date.UTC(day.getUTCFullYear(), day.getUTCMonth(), 1)));
                 }}
               >

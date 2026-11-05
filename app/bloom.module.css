@@ -304,3 +304,6 @@
 .calendarCompletePage { min-height: 100dvh; display: grid; place-items: center; padding: 20px; background: #f9f2e7; }
 .calendarCompletion { width: min(100%, 500px); padding: clamp(24px, 7vw, 52px); border: 1px solid var(--line); background: var(--paper); text-align: center; }
 .calendarCompletion h1 { margin: 10px 0 14px; font-size: clamp(25px, 6vw, 40px); font-weight: 700; }
+
+.calendarReturn { padding: 0 var(--gutter) 45px; background: #f9f2e7; text-align: center; }
+.calendarReturn a { display: inline-block; }
