@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+const siteName = "bloom/동백의 계절";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://test-ten-silk-17.vercel.app"),
-  title: "BLOOM | 제주 동백마을",
+  title: siteName,
   description: "제주의 순간을, 일상에 피우다. 동백마을의 사진과 이야기를 만나보세요.",
   openGraph: {
-    title: "BLOOM | 동희와 동백군",
+    title: siteName,
+    siteName,
     description: "동희와 동백군과 함께 제주 동백마을의 사진과 이야기를 만나보세요.",
     type: "website",
     locale: "ko_KR",
