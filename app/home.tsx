@@ -303,8 +303,6 @@ export default function Home({ account, welcome }: { account: ReactNode; welcome
               <a className={styles.textLink} href="#collection">컬렉션 보기 <span aria-hidden="true">→</span></a>
             </div>
           </div>
-          <img className={styles.heroImage} src={asset("hero")} alt="BLOOM 제주 동백마을 캠페인" fetchPriority="high" />
-          <span className={styles.heroIndex}>01 / JEJU ISLAND</span>
         </section>
 
         <section className={styles.highlights + " " + styles.section} aria-labelledby="highlights-title">
@@ -348,6 +346,7 @@ export default function Home({ account, welcome }: { account: ReactNode; welcome
             <div className={styles.filters} aria-label="사진 분류">
               {categories.map((item) => <button type="button" key={item} aria-pressed={category === item} onClick={() => setCategory(item)}>{item === "저장한 사진" ? "♡ " : ""}{item}</button>)}
             </div>
+          <img className={styles.heroImage} src={asset("hero")} alt="BLOOM 제주 동백마을 캠페인" width={600} height={850} fetchPriority="high" />
             <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="사진 제목 검색" aria-label="사진 제목 검색" />
           </div>
           <p className={styles.results} role="status">{visiblePhotos.length}장의 사진 <span> / 전체 {photos.length}장</span></p>
