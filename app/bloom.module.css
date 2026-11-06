@@ -28,6 +28,10 @@
 }
 
 .brand { font: 400 38px/1 "Parisienne", cursive; white-space: nowrap; }
+.newsletterForm { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin: 16px 0 8px; }
+.newsletterForm label { display: grid; flex: 0 1 320px; gap: 4px; font-size: 14px; }
+.newsletterForm input { min-width: 0; padding: 10px 14px; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); }
+.newsletterForm .cta { margin: 0; }
 .wordmarkFlower {
   display: inline-block;
   width: .56em;

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "rea
 import styles from "./bloom.module.css";
 import DatePicker from "./date-picker";
 import CommunityLook from "./community-look";
+import Newsletter from "./newsletter";
 import { GiftBuilder, KeyringPreview, PhotoTour, Postcard } from "./experiences";
 
 const sections = [
@@ -471,6 +472,7 @@ export default function Home({ account, welcome }: { account: ReactNode; welcome
         </section>
         <DatePicker onSelect={setPostcardDate} />
         {postcardDate && <div className={styles.calendarReturn}><a className={styles.outline} href="#postcard">고른 날짜로 엽서 만들기 ↗</a></div>}
+        <Newsletter />
       </main>
 
       <footer className={styles.footer}>

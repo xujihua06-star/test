@@ -29,6 +29,13 @@ export default function CredentialsForm({ signup = false }: { signup?: boolean }
         ? await client.auth.signUp({ email, password, options: { data: { nickname } } })
         : await client.auth.signInWithPassword({ email, password });
       if (!result.error && (signup ? result.data.user : result.data.session)) {
+        if (signup && result.data.session) {
+          await fetch("/api/newsletter", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ source: "signup" }),
+          }).catch(() => {});
+        }
         window.location.assign("/");
         return;
       }
@@ -57,6 +64,7 @@ export default function CredentialsForm({ signup = false }: { signup?: boolean }
           <label>이메일<input name="email" type="email" autoComplete="email" required /></label>
           <label>비밀번호<input name="password" type="password" autoComplete={signup ? "new-password" : "current-password"} minLength={signup ? 6 : undefined} required /></label>
           {signup && <label>닉네임<input name="nickname" autoComplete="nickname" maxLength={40} required /></label>}
+          {signup && <p>가입한 이메일은 회원가입 기록을 위해 저장됩니다.</p>}
           {error && <p className={styles.error} role="alert">{error}</p>}
           <button className={styles.primary} disabled={pending}>{pending ? "처리 중…" : title}</button>
         </form>
