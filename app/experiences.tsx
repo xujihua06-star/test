@@ -124,6 +124,26 @@ export function PhotoTour({ stops, stamps, onStamp, complete, discountRate }: {
     <section className={bloom.section + " " + styles.tour} id="photo-tour" aria-labelledby="tour-title">
       <p className={bloom.eyebrow}>BLOOM STUDIO / 02</p>
       <h2 id="tour-title">동백길 포토 투어.</h2>
+      <figure className={styles.tourMap} id="tour-map">
+        <figcaption>
+          <h3>동백마을 산책 지도</h3>
+          <p>장소를 누르면 사진과 이야기가 열려요. 포토 투어 순서를 그린 그림 지도예요.</p>
+        </figcaption>
+        <div className={styles.mapCanvas} role="group" aria-label="포토 투어 장소 선택">
+          <svg viewBox="0 0 600 200" preserveAspectRatio="none" aria-hidden="true">
+            <path fill="#c9e0dd" d="M410 0H600V200H436Q394 152 453 112T410 0Z" />
+            <path fill="#dce3cb" d="M0 0H241Q205 47 129 45T0 123Z" />
+            <path d="M96 128C180 128 213 74 300 74S416 122 504 122" fill="none" stroke="#9a5145" stroke-width="2" stroke-dasharray="5 6" vector-effect="non-scaling-stroke" />
+          </svg>
+          {stops.map(({ id, stamp }, stopIndex) => (
+            <button key={id} type="button" aria-pressed={index === stopIndex} onClick={() => setIndex(stopIndex)}>
+              <span aria-hidden="true">{stamps.includes(id) ? "✓" : stopIndex + 1}</span>
+              {stamp}
+              {stamps.includes(id) && <span className="sr-only">도장 획득</span>}
+            </button>
+          ))}
+        </div>
+      </figure>
       <div className={styles.tourCard}>
         <img src={image(stop.id)} alt={stop.title} loading="lazy" />
         <div className={styles.tourContent}>

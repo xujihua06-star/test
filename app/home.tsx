@@ -11,6 +11,7 @@ const sections = [
   ["postcard", "JEJU POSTCARD"],
   ["collection", "COLLECTION"],
   ["photo-tour", "PHOTO TOUR"],
+  ["tour-map", "TOUR MAP"],
   ["community", "COMMUNITY"],
   ["calendar", "CALENDAR"],
 ];
