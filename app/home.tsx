@@ -82,7 +82,11 @@ function BloomWordmark() {
   return (
     <>
       Bloom
-      <img className={styles.wordmarkEmblem} src="/bloom/camellia-emblem.png" alt="" width={128} height={128} />
+      <svg className={styles.wordmarkFlower} viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M2 39c10 4 20-3 24-13m-7 9c1-7-3-10-8-11 0 6 3 10 8 11Zm1 0c4-5 10-5 14-2-4 4-9 5-14 2Z" />
+        <path className={styles.flowerPetals} d="M27 15c-4-5-1-11 3-11s6 5 4 10c5-4 11-1 11 3s-5 7-10 6c3 5 0 10-4 10s-6-4-6-9c-4 3-10 0-9-4 1-4 6-5 11-3Z" />
+        <circle cx="30" cy="19" r="2" fill="currentColor" stroke="none" />
+      </svg>
     </>
   );
 }
